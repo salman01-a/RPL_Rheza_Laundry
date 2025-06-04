@@ -1,0 +1,44 @@
+body {
+    background-color: #f8f9fa;
+}
+
+.bg-primary {
+    background-color: #4880FF !important;
+}
+
+.nav-link.active {
+    background-color: white !important;
+    color: #4880FF !important;
+    font-weight: bold;
+}
+
+.badge.bg-success-custom {
+    background-color: #00B69B;
+}
+
+.badge.bg-processing {
+    background-color: #6226EF;
+    color: white;
+}
+
+
+.nav-link {
+    color: #000 !important;
+    border-radius: 10px;
+    padding: 10px 15px;
+    transition: 0.2s;
+}
+
+.nav-link:hover {
+    background-color: #f0f0f0;
+}
+
+.nav-link.active {
+    background-color: #4880FF !important;
+    color: white !important;
+    font-weight: bold;
+}
+
+.nav-link.active i {
+    color: white !important;
+}
