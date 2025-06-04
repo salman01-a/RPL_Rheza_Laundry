@@ -18,7 +18,7 @@ if (!isset($_SESSION['user_id'])) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../../style/DashboardOwner.css">
+    <link rel="stylesheet" href="../style/DashboardOwner.css">
     <style>
         body {
             font-family: 'Nunito Sans', sans-serif;
@@ -74,8 +74,8 @@ if (!isset($_SESSION['user_id'])) {
     <div class="d-flex">
         <?php 
         if($_SESSION['role'] == 'owner')
-        include '../../layout/sidebar.php'; 
-        else include '../../layout/SidebarStaff.php';
+        include '../layout/sidebar.php'; 
+        else include '../layout/SidebarStaff.php';
         ?>
 
         <div class="p-4 flex-grow-1 w-100">

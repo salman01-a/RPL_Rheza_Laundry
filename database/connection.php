@@ -1,5 +1,5 @@
 <?php 
-$conn = new mysqli("localhost","root","","db_rheza_laundry");
+$conn = new mysqli("localhost","root","","RPL");
 if($conn -> connect_error){
     die($conn -> connect_error);
 }
