@@ -18,20 +18,22 @@ if (isset($_POST['submit_all'])) {
     if (!empty($id)) {
         // Edit
         $query = "UPDATE layanan SET nama_layanan = '$nama' WHERE id_layanan = $id";
+        mysqli_query($conn, $query);
+        header("Location: layanan.php?success=edit");  // untuk tambah
+        exit();
     } else {
         // Tambah
         $query = "INSERT INTO layanan (nama_layanan) VALUES ('$nama')";
+        mysqli_query($conn, $query);
+        header("Location: layanan.php?success=add"); // untuk tambah
+        exit();
     }
-
-    mysqli_query($conn, $query);
-    header("Location: layanan.php?success=1");
-    exit();
 }
 
 if (isset($_GET['id_hapus'])) {
     $id_hapus = intval($_GET['id_hapus']);
     mysqli_query($conn, "DELETE FROM layanan WHERE id_layanan = $id_hapus");
-    header("Location: layanan.php?success=hapus");
+    header("Location: layanan.php?success=delete");
     exit();
 }
 
@@ -138,20 +140,16 @@ if (isset($_GET['id_hapus'])) {
             <!-- Tabel Data -->
             <div class="card shadow-sm">
                 <div class="card-body">
-                    <?php if (isset($_GET['success'])) : ?>
+                    <?php if (isset($_GET['success'])): ?>
                         <div class="alert alert-success alert-dismissible fade show" role="alert">
-                            Data layanan berhasil disimpan!
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            <?php
+                            if ($_GET['success'] == 'add') echo "Data Layanan berhasil ditambahkan.";
+                            elseif ($_GET['success'] == 'edit') echo "Data Layanan berhasil diperbarui.";
+                            elseif ($_GET['success'] == 'delete') echo "Data Layanan berhasil dihapus.";
+                            ?>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>
                     <?php endif; ?>
-
-                    <?php if (isset($_GET['success']) && $_GET['success'] === 'hapus'): ?>
-                        <div class="alert alert-success alert-dismissible fade show" role="alert">
-                            Layanan berhasil dihapus!
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                        </div>
-                    <?php endif; ?>
-
 
                     <h5 class="fw-bold mb-3">Daftar Layanan</h5>
                     <table class="table table-hover">
@@ -181,7 +179,6 @@ if (isset($_GET['id_hapus'])) {
                                                 onclick="return confirm('Hapus layanan ini?')">
                                                 <i class="bi bi-trash3 fs-10"></i>
                                             </a>
-
                                         </div>
                                     </td>
 
