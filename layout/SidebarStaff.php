@@ -7,7 +7,7 @@
         <li><a href="transaksi.php" class="nav-link <?= ($page == 'transaksi') ? 'active' : '' ?>"><i class="bi bi-cart me-2"></i>Transaksi</a></li>
         <li><a href="pelanggan.php" class="nav-link <?= ($page == 'pelanggan') ? 'active' : '' ?>"><i class="bi bi-people me-2"></i>Pelanggan</a></li>
         <li><a href="operasional.php" class="nav-link <?= ($page == 'operasional') ? 'active' : '' ?>"><i class="bi bi-gear me-2"></i>Operasional</a></li>
-        <li><a href="bahanbaku.php" class="nav-link <?= ($page == 'bahan_baku') ? 'active' : '' ?>"><i class="bi bi-droplet me-2"></i>Bahan Baku</a></li>
+        <li><a href="bahan_baku.php" class="nav-link <?= ($page == 'bahan_baku') ? 'active' : '' ?>"><i class="bi bi-droplet me-2"></i>Bahan Baku</a></li>
     </ul>
     <hr>
     <a href="#" class="text-decoration-none d-flex align-items-center nav-link">
