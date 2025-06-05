@@ -8,7 +8,7 @@
                 <li><a href="pelanggan.php" class="nav-link <?= ($page == 'pelanggan') ? 'active' : '' ?>"><i class="bi bi-people me-2"></i>Pelanggan</a></li>
                 <li><a href="layanan.php" class="nav-link <?= ($page == 'layanan') ? 'active' : '' ?>"><i class="bi bi-box me-2"></i>Layanan</a></li>
                 <li><a href="operasional.php" class="nav-link <?= ($page == 'operasional') ? 'active' : '' ?>"><i class="bi bi-gear me-2"></i>Operasional</a></li>
-                <li><a href="bahanbaku.php" class="nav-link <?= ($page == 'bahan_baku') ? 'active' : '' ?>"><i class="bi bi-droplet me-2"></i>Bahan Baku</a></li>
+                <li><a href="bahan_baku.php" class="nav-link <?= ($page == 'bahan_baku') ? 'active' : '' ?>"><i class="bi bi-droplet me-2"></i>Bahan Baku</a></li>
                 <li><a href="laporan.php" class="nav-link <?= ($page == 'laporan') ? 'active' : '' ?>"><i class="bi bi-file-earmark-text me-2"></i>Laporan</a></li>
                 <li><a href="staff.php" class="nav-link <?= ($page == 'staff') ? 'active' : '' ?>"><i class="bi bi-person me-2"></i>Staff</a></li>
             </ul>
