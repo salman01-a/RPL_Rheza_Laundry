@@ -201,6 +201,7 @@
                                     <th>Berat Cucian</th>
                                     <th>Metode Pembayaran</th>
                                     <th>Status</th>
+                                    <th>Status Pembayaran</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -224,8 +225,9 @@
             <td>{$row['nama_layanan']}</td>
             <td>{$row['jumlah_berat']}Kg</td>
             <td>{$row['metode_pembayaran']}</td>
+            <td>{$row['status_pembayaran']}</td>    
             <td><span class='badge $badge_class'>{$status}</span></td>
-        </tr>";
+            </tr>";
         $no++;
     }
     ?>

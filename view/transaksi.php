@@ -99,6 +99,7 @@ if (isset($_POST['update_transaksi'])) {
                         <th>Layanan</th>
                         <th>Berat</th>
                         <th>Metode</th>
+                        <th>Status Pembayaran</th>
                         <th>Status</th>
                         <th>Aksi</th>
                     </tr>
@@ -124,6 +125,7 @@ if (isset($_POST['update_transaksi'])) {
                         <td><?= $row['nama_layanan'] ?></td>
                         <td><?= $row['jumlah_berat'] ?> KG</td>
                         <td><?= $row['metode_pembayaran'] ?></td>
+                        <td><?= $row['status_pembayaran'] ?></td>
                         <td><span class="badge bg-<?= $badge ?>"><?= $row['status_proses'] ?></span></td>
                         <td>
                             <button class="btn btn-sm btn-outline-secondary me-1" data-bs-toggle="modal" data-bs-target="#modalEdit<?= $row['id_transaksi'] ?>">
