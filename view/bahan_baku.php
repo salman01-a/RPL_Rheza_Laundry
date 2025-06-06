@@ -18,20 +18,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     $nama_barang = $_POST['nama_barang'];
     $jumlah_stok = $_POST['jumlah_stok'];
+    $harga = $_POST['harga'];
     $tanggal_update = date('Y-m-d');
 
     if (isset($_POST['id_edit']) && $_POST['id_edit'] != '') {
         $id_edit = $_POST['id_edit'];
-        $query = "UPDATE Bahan_Baku SET nama_barang=?, jumlah_stok=?, tanggal_update=? WHERE id_bahan_baku=?";
+        $query = "UPDATE Bahan_Baku SET nama_barang=?, jumlah_stok=?, harga=?, tanggal_update=? WHERE id_bahan_baku=?";
         $stmt = $conn->prepare($query);
-        $stmt->bind_param("sisi", $nama_barang, $jumlah_stok, $tanggal_update, $id_edit);
+        $stmt->bind_param("sissi", $nama_barang, $jumlah_stok, $harga, $tanggal_update, $id_edit);
     } else {
-        $query = "INSERT INTO Bahan_Baku (id_user, nama_barang, jumlah_stok, tanggal_update) VALUES (?, ?, ?, ?)";
+        $query = "INSERT INTO Bahan_Baku (id_user, nama_barang, jumlah_stok, harga, tanggal_update) VALUES (?, ?, ?, ?, ?)";
         $stmt = $conn->prepare($query);
-        $stmt->bind_param("isis", $id_user, $nama_barang, $jumlah_stok, $tanggal_update);
+        $stmt->bind_param("isiss", $id_user, $nama_barang, $jumlah_stok, $harga, $tanggal_update);
     }
 
-    // Eksekusi dan tampilkan error jika ada
     if (!$stmt->execute()) {
         die("Query gagal: " . $stmt->error);
     }
@@ -40,7 +40,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit();
 }
 
-// HAPUS
 if (isset($_GET['delete'])) {
     $id = $_GET['delete'];
     $stmt = $conn->prepare("DELETE FROM Bahan_Baku WHERE id_bahan_baku=?");
@@ -51,7 +50,6 @@ if (isset($_GET['delete'])) {
     exit();
 }
 
-// AMBIL DATA
 $data = $conn->query("SELECT * FROM Bahan_Baku ORDER BY id_bahan_baku DESC");
 ?>
 
@@ -122,6 +120,7 @@ $data = $conn->query("SELECT * FROM Bahan_Baku ORDER BY id_bahan_baku DESC");
                             <th>No</th>
                             <th>Nama Barang</th>
                             <th>Jumlah Stok</th>
+                            <th>Harga</th>
                             <th>Update Terakhir</th>
                             <th>Aksi</th>
                         </tr>
@@ -132,6 +131,7 @@ $data = $conn->query("SELECT * FROM Bahan_Baku ORDER BY id_bahan_baku DESC");
                             <td><?= $no++ ?></td>
                             <td><?= htmlspecialchars($row['nama_barang']) ?></td>
                             <td><?= $row['jumlah_stok'] ?></td>
+                            <td>Rp <?= number_format($row['harga'], 0, ',', '.') ?></td>
                             <td><?= $row['tanggal_update'] ?></td>
                             <td>
                                 <div class="d-flex justify-content-center gap-2">
@@ -140,7 +140,8 @@ $data = $conn->query("SELECT * FROM Bahan_Baku ORDER BY id_bahan_baku DESC");
                                         data-bs-target="#modalForm"
                                         data-id="<?= $row['id_bahan_baku'] ?>"
                                         data-nama="<?= htmlspecialchars($row['nama_barang']) ?>"
-                                        data-jumlah="<?= $row['jumlah_stok'] ?>">
+                                        data-jumlah="<?= $row['jumlah_stok'] ?>"
+                                        data-harga="<?= $row['harga'] ?>">
                                         ✏️
                                     </button>
                                     <a href="?delete=<?= $row['id_bahan_baku'] ?>" onclick="return confirm('Yakin ingin hapus?')" class="btn btn-sm btn-delete">🗑️</a>
@@ -148,7 +149,7 @@ $data = $conn->query("SELECT * FROM Bahan_Baku ORDER BY id_bahan_baku DESC");
                             </td>
                         </tr>
                         <?php endwhile; if ($data->num_rows == 0): ?>
-                        <tr><td colspan="5">Belum ada data</td></tr>
+                        <tr><td colspan="6">Belum ada data</td></tr>
                         <?php endif; ?>
                     </tbody>
                 </table>
@@ -156,7 +157,6 @@ $data = $conn->query("SELECT * FROM Bahan_Baku ORDER BY id_bahan_baku DESC");
         </div>
     </div>
 </div>
-
 
 <!-- Modal Tambah/Edit -->
 <div class="modal fade" id="modalForm" tabindex="-1" aria-labelledby="modalFormLabel" aria-hidden="true">
@@ -176,6 +176,10 @@ $data = $conn->query("SELECT * FROM Bahan_Baku ORDER BY id_bahan_baku DESC");
                 <label for="jumlah_stok" class="form-label">Jumlah Stok</label>
                 <input type="number" class="form-control" name="jumlah_stok" id="jumlah_stok" required>
             </div>
+            <div class="mb-3">
+                <label for="harga" class="form-label">Harga</label>
+                <input type="number" class="form-control" name="harga" id="harga" required>
+            </div>
         </div>
         <div class="modal-footer">
             <button type="submit" class="btn btn-primary">Simpan</button>
@@ -193,10 +197,12 @@ document.addEventListener('DOMContentLoaded', function () {
         const id = button.getAttribute('data-id');
         const nama = button.getAttribute('data-nama');
         const jumlah = button.getAttribute('data-jumlah');
+        const harga = button.getAttribute('data-harga');
 
         document.getElementById('id_edit').value = id || '';
         document.getElementById('nama_barang').value = nama || '';
         document.getElementById('jumlah_stok').value = jumlah || '';
+        document.getElementById('harga').value = harga || '';
     });
 });
 </script>
