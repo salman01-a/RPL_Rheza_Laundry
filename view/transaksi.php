@@ -87,6 +87,7 @@ if (isset($_POST['update_transaksi'])) {
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Transaksi</title>
@@ -95,41 +96,42 @@ if (isset($_POST['update_transaksi'])) {
     <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../style/DashboardOwner.css">
 </head>
+
 <body style="font-family: 'Nunito Sans', sans-serif; background-color: #F8F9FC;">
-<div class="d-flex">
-    <?php 
-    if ($_SESSION['role'] == 'owner')
-        include '../layout/sidebar.php'; 
-    else 
-        include '../layout/SidebarStaff.php';
-    ?>
+    <div class="d-flex">
+        <?php
+        if ($_SESSION['role'] == 'owner')
+            include '../layout/sidebar.php';
+        else
+            include '../layout/SidebarStaff.php';
+        ?>
 
-    <div class="p-4 flex-grow-1 w-100">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h3 class="fw-bold">Transaksi</h3>
-            <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalTambahTransaksi">
-                <i class="bi bi-plus-circle me-1"></i>Tambah Transaksi
-            </button>
-        </div>
+        <div class="p-4 flex-grow-1 w-100">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h3 class="fw-bold">Transaksi</h3>
+                <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalTambahTransaksi">
+                    <i class="bi bi-plus-circle me-1"></i>Tambah Transaksi
+                </button>
+            </div>
 
-        <!-- Tabel -->
-        <div class="table-responsive bg-white rounded p-3 shadow-sm">
-            <table class="table table-bordered table-hover align-middle">
-                <thead class="table-light">
-                    <tr>
-                        <th>#</th>
-                        <th>Pelanggan</th>
-                        <th>Layanan</th>
-                        <th>Berat</th>
-                        <th>Metode</th>
-                        <th>Status Pembayaran</th>
-                        <th>Status</th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
-                    $query = mysqli_query($conn, "
+            <!-- Tabel -->
+            <div class="table-responsive bg-white rounded p-3 shadow-sm">
+                <table class="table table-bordered table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>#</th>
+                            <th>Pelanggan</th>
+                            <th>Layanan</th>
+                            <th>Berat</th>
+                            <th>Metode</th>
+                            <th>Status Pembayaran</th>
+                            <th>Status</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        $query = mysqli_query($conn, "
                         SELECT t.*, p.nama, d.jumlah_berat, l.nama_layanan 
                         FROM Transaksi t
                         JOIN Pelanggan p ON t.id_pelanggan = p.id_pelanggan
@@ -137,32 +139,42 @@ if (isset($_POST['update_transaksi'])) {
                         JOIN Layanan l ON l.id_layanan = d.id_layanan
                         ORDER BY t.id_transaksi DESC
                     ");
-                    $no = 1;
-                    $modals = '';
-                    while ($row = mysqli_fetch_assoc($query)):
-                        $badge = $row['status_proses'] === 'Completed' ? 'success' : ($row['status_proses'] === 'Processing' ? 'primary' : 'danger');
-                    ?>
-                    <tr>
-                        <td><?= $no++ ?></td>
-                        <td><?= $row['nama'] ?></td>
-                        <td><?= $row['nama_layanan'] ?></td>
-                        <td><?= $row['jumlah_berat'] ?> KG</td>
-                        <td><?= $row['metode_pembayaran'] ?></td>
-                        <td><?= $row['status_pembayaran'] ?></td>
-                        <td><span class="badge bg-<?= $badge ?>"><?= $row['status_proses'] ?></span></td>
-                        <td>
-                            <button class="btn btn-sm btn-outline-secondary me-1" data-bs-toggle="modal" data-bs-target="#modalEdit<?= $row['id_transaksi'] ?>">
-                                <i class="bi bi-pencil-square"></i>
-                            </button>
-                            <a href="?hapus=<?= $row['id_transaksi'] ?>" onclick="return confirm('Yakin ingin menghapus?')" class="btn btn-sm btn-outline-danger">
-                                <i class="bi bi-trash"></i>
-                            </a>
-                        </td>
-                    </tr>
+                        $no = 1;
+                        $modals = '';
+                        while ($row = mysqli_fetch_assoc($query)):
+                            $badge = $row['status_proses'] === 'Completed' ? 'success' : ($row['status_proses'] === 'Processing' ? 'primary' : 'danger');
+                        ?>
+                            <tr>
+                                <td><?= $no++ ?></td>
+                                <td><?= $row['nama'] ?></td>
+                                <td><?= $row['nama_layanan'] ?></td>
+                                <td><?= $row['jumlah_berat'] ?> KG</td>
+                                <td><?= $row['metode_pembayaran'] ?></td>
+                                <td><?= $row['status_pembayaran'] ?></td>
+                                <td><span class="badge bg-<?= $badge ?>"><?= $row['status_proses'] ?></span></td>
+                                <td>
+                                    <div class="d-inline-flex border rounded-3 overflow-hidden bg-light">
+                                        <a class="d-flex align-items-center justify-content-center px-3 py-2 text-secondary"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#modalEdit<?= $row['id_transaksi'] ?>">
+                                            <i class="bi bi-pencil-square fs-10"></i>
+                                        </a>
 
-                    <?php
-                    $modals .= '
-                    <div class="modal fade" id="modalEdit'.$row['id_transaksi'].'" tabindex="-1">
+                                        <div class="border-start"></div>
+
+                                        <a href="?hapus=<?= $row['id_transaksi'] ?>"
+                                            class="d-flex align-items-center justify-content-center px-3 py-2 text-danger"
+                                            onclick="return confirm('Yakin ingin menghapus?')">
+                                            <i class="bi bi-trash3 fs-10"></i>
+                                        </a>
+                                    </div>
+
+                                </td>
+                            </tr>
+
+                        <?php
+                            $modals .= '
+                    <div class="modal fade" id="modalEdit' . $row['id_transaksi'] . '" tabindex="-1">
                         <div class="modal-dialog">
                             <form method="POST" class="modal-content">
                                 <div class="modal-header">
@@ -170,20 +182,20 @@ if (isset($_POST['update_transaksi'])) {
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                 </div>
                                 <div class="modal-body">
-                                    <input type="hidden" name="id_transaksi" value="'.$row['id_transaksi'].'">
+                                    <input type="hidden" name="id_transaksi" value="' . $row['id_transaksi'] . '">
                                     <div class="mb-2">
                                         <label>Status Proses</label>
                                         <select name="edit_status_proses" class="form-control">
-                                            <option value="Processing" '.($row['status_proses']=='Processing'?'selected':'').'>Processing</option>
-                                            <option value="Completed" '.($row['status_proses']=='Completed'?'selected':'').'>Completed</option>
-                                            <option value="Rejected" '.($row['status_proses']=='Rejected'?'selected':'').'>Rejected</option>
+                                            <option value="Processing" ' . ($row['status_proses'] == 'Processing' ? 'selected' : '') . '>Processing</option>
+                                            <option value="Completed" ' . ($row['status_proses'] == 'Completed' ? 'selected' : '') . '>Completed</option>
+                                            <option value="Rejected" ' . ($row['status_proses'] == 'Rejected' ? 'selected' : '') . '>Rejected</option>
                                         </select>
                                     </div>
                                     <div class="mb-2">
                                         <label>Status Pembayaran</label>
                                         <select name="edit_status_pembayaran" class="form-control">
-                                            <option value="Belum Lunas" '.($row['status_pembayaran']=='Belum Lunas'?'selected':'').'>Belum Lunas</option>
-                                            <option value="Lunas" '.($row['status_pembayaran']=='Lunas'?'selected':'').'>Lunas</option>
+                                            <option value="Belum Lunas" ' . ($row['status_pembayaran'] == 'Belum Lunas' ? 'selected' : '') . '>Belum Lunas</option>
+                                            <option value="Lunas" ' . ($row['status_pembayaran'] == 'Lunas' ? 'selected' : '') . '>Lunas</option>
                                         </select>
                                     </div>
                                 </div>
@@ -193,99 +205,100 @@ if (isset($_POST['update_transaksi'])) {
                             </form>
                         </div>
                     </div>';
-                    endwhile;
-                    ?>
-                </tbody>
-            </table>
+                        endwhile;
+                        ?>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Cetak semua modal edit -->
+            <?= $modals ?>
         </div>
-
-        <!-- Cetak semua modal edit -->
-        <?= $modals ?>
     </div>
-</div>
 
-<!-- Modal Tambah Transaksi -->
-<div class="modal fade" id="modalTambahTransaksi" tabindex="-1">
-    <div class="modal-dialog modal-lg">
-        <form method="POST" class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Tambah Transaksi</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <!-- Step 1 -->
-                <div id="step1">
-                    <h6>Data Pelanggan</h6>
-                    <div class="mb-2">
-                        <label>Nama</label>
-                        <input type="text" name="nama_pelanggan" class="form-control" required>
-                    </div>
-                    <div class="mb-2">
-                        <label>No HP</label>
-                        <input type="text" name="no_hp" class="form-control">
-                    </div>
-                    <div class="mb-3">
-                        <label>Alamat</label>
-                        <textarea name="alamat" class="form-control"></textarea>
-                    </div>
-                    <button type="button" class="btn btn-primary" onclick="nextStep()">Lanjut</button>
+    <!-- Modal Tambah Transaksi -->
+    <div class="modal fade" id="modalTambahTransaksi" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <form method="POST" class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Tambah Transaksi</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
+                <div class="modal-body">
+                    <!-- Step 1 -->
+                    <div id="step1">
+                        <h6>Data Pelanggan</h6>
+                        <div class="mb-2">
+                            <label>Nama</label>
+                            <input type="text" name="nama_pelanggan" class="form-control" required>
+                        </div>
+                        <div class="mb-2">
+                            <label>No HP</label>
+                            <input type="text" name="no_hp" class="form-control">
+                        </div>
+                        <div class="mb-3">
+                            <label>Alamat</label>
+                            <textarea name="alamat" class="form-control"></textarea>
+                        </div>
+                        <button type="button" class="btn btn-primary" onclick="nextStep()">Lanjut</button>
+                    </div>
 
-                <!-- Step 2 -->
-                <div id="step2" style="display: none;">
-                    <h6>Data Laundry</h6>
-                    <div class="mb-2">
-                        <label>Layanan</label>
-                        <select name="id_layanan" class="form-control" required>
-                            <?php 
-                            $layanan = mysqli_query($conn, "SELECT * FROM Layanan");
-                            while ($row = mysqli_fetch_assoc($layanan)): ?>
-                                <option value="<?= $row['id_layanan'] ?>"><?= $row['nama_layanan'] ?></option>
-                            <?php endwhile; ?>
-                        </select>
-                    </div>
-                    <div class="mb-2">
-                        <label>Berat (KG)</label>
-                        <input type="number" name="jumlah_berat" step="0.1" class="form-control" required>
-                    </div>
-                    <div class="mb-2">
-                        <label>Metode Pembayaran</label>
-                        <select name="metode_pembayaran" class="form-control">
-                            <option value="Cash">Cash</option>
-                            <option value="Cashless">Cashless</option>
-                        </select>
-                    </div>
-                    <div class="mb-2">
-                        <label>Status Proses</label>
-                        <select name="status_proses" class="form-control">
-                            <option value="Processing">Processing</option>
-                            <option value="Completed">Completed</option>
-                        </select>
-                    </div>
-                    <div class="mb-2">
-                        <label>Status Pembayaran</label>
-                        <select name="status_pembayaran" class="form-control">
-                            <option value="Belum Lunas">Belum Lunas</option>
-                            <option value="Lunas">Lunas</option>
-                        </select>
+                    <!-- Step 2 -->
+                    <div id="step2" style="display: none;">
+                        <h6>Data Laundry</h6>
+                        <div class="mb-2">
+                            <label>Layanan</label>
+                            <select name="id_layanan" class="form-control" required>
+                                <?php
+                                $layanan = mysqli_query($conn, "SELECT * FROM Layanan");
+                                while ($row = mysqli_fetch_assoc($layanan)): ?>
+                                    <option value="<?= $row['id_layanan'] ?>"><?= $row['nama_layanan'] ?></option>
+                                <?php endwhile; ?>
+                            </select>
+                        </div>
+                        <div class="mb-2">
+                            <label>Berat (KG)</label>
+                            <input type="number" name="jumlah_berat" step="0.1" class="form-control" required>
+                        </div>
+                        <div class="mb-2">
+                            <label>Metode Pembayaran</label>
+                            <select name="metode_pembayaran" class="form-control">
+                                <option value="Cash">Cash</option>
+                                <option value="Cashless">Cashless</option>
+                            </select>
+                        </div>
+                        <div class="mb-2">
+                            <label>Status Proses</label>
+                            <select name="status_proses" class="form-control">
+                                <option value="Processing">Processing</option>
+                                <option value="Completed">Completed</option>
+                            </select>
+                        </div>
+                        <div class="mb-2">
+                            <label>Status Pembayaran</label>
+                            <select name="status_pembayaran" class="form-control">
+                                <option value="Belum Lunas">Belum Lunas</option>
+                                <option value="Lunas">Lunas</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="modal-footer">
-                <button type="submit" name="submit_all" class="btn btn-success" id="btnSimpan" style="display:none">Simpan Transaksi</button>
-            </div>
-        </form>
+                <div class="modal-footer">
+                    <button type="submit" name="submit_all" class="btn btn-success" id="btnSimpan" style="display:none">Simpan Transaksi</button>
+                </div>
+            </form>
+        </div>
     </div>
-</div>
 
-<!-- Script -->
-<script>
-    function nextStep() {
-        document.getElementById('step1').style.display = 'none';
-        document.getElementById('step2').style.display = 'block';
-        document.getElementById('btnSimpan').style.display = 'inline-block';
-    }
-</script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Script -->
+    <script>
+        function nextStep() {
+            document.getElementById('step1').style.display = 'none';
+            document.getElementById('step2').style.display = 'block';
+            document.getElementById('btnSimpan').style.display = 'inline-block';
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>

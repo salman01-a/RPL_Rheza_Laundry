@@ -1,7 +1,10 @@
-<?php 
-$page = 'pelanggan'; 
+<?php
+$page = 'pelanggan';
 include '../database/connection.php';
 session_start();
+$selected_bulan = isset($_GET['bulan']) ? $_GET['bulan'] : date('m');
+$selected_tahun = isset($_GET['tahun']) ? $_GET['tahun'] : date('Y');
+
 if (!isset($_SESSION['user_id'])) {
     header("Location: ../");
     exit();
@@ -69,10 +72,10 @@ if (!isset($_SESSION['user_id'])) {
 
 <body>
     <div class="d-flex">
-        <?php 
-        if($_SESSION['role'] == 'owner')
-            include '../layout/sidebar.php'; 
-        else 
+        <?php
+        if ($_SESSION['role'] == 'owner')
+            include '../layout/sidebar.php';
+        else
             include '../layout/SidebarStaff.php';
         ?>
 
@@ -86,13 +89,45 @@ if (!isset($_SESSION['user_id'])) {
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <h5 class="mb-0 fw-bold">Daftar Pelanggan</h5>
-                        <select class="form-select dropdown-month">
-                            <option>Oktober</option>
-                            <option>November</option>
-                            <option>Desember</option>
-                        </select>
-                    </div>
+                        <form method="GET" class="d-flex align-items-center gap-2">
+                            <select name="bulan" class="form-select dropdown-month" onchange="this.form.submit()">
+                                <?php
+                                $bulan_list = [
+                                    '01' => 'Januari',
+                                    '02' => 'Februari',
+                                    '03' => 'Maret',
+                                    '04' => 'April',
+                                    '05' => 'Mei',
+                                    '06' => 'Juni',
+                                    '07' => 'Juli',
+                                    '08' => 'Agustus',
+                                    '09' => 'September',
+                                    '10' => 'Oktober',
+                                    '11' => 'November',
+                                    '12' => 'Desember'
+                                ];
+                                $selected_bulan = isset($_GET['bulan']) ? $_GET['bulan'] : date('m');
+                                foreach ($bulan_list as $key => $val) {
+                                    $selected = ($selected_bulan == $key) ? 'selected' : '';
+                                    echo "<option value='$key' $selected>$val</option>";
+                                }
+                                ?>
+                            </select>
 
+                            <select name="tahun" class="form-select dropdown-month" onchange="this.form.submit()">
+                                <?php
+                                $current_year = date('Y');
+                                $selected_tahun = isset($_GET['tahun']) ? $_GET['tahun'] : $current_year;
+                                for ($i = $current_year; $i >= $current_year - 5; $i--) {
+                                    $selected = ($selected_tahun == $i) ? 'selected' : '';
+                                    echo "<option value='$i' $selected>$i</option>";
+                                }
+                                ?>
+                            </select>
+                        </form>
+
+                    </div>
+<h6 class="fw-bold mb-3">Menampilkan pelanggan dengan transaksi di bulan <?= $bulan_list[$selected_bulan] ?> <?= $selected_tahun ?></h6>
                     <table class="table table-hover table-bordered">
                         <thead>
                             <tr>
@@ -104,7 +139,14 @@ if (!isset($_SESSION['user_id'])) {
                         </thead>
                         <tbody>
                             <?php
-                            $query = "SELECT * FROM pelanggan ORDER BY id_pelanggan ASC";
+                            $query = "
+    SELECT DISTINCT p.* 
+    FROM pelanggan p
+    JOIN transaksi t ON p.id_pelanggan = t.id_pelanggan
+    WHERE MONTH(t.waktu_mulai) = '$selected_bulan' AND YEAR(t.waktu_mulai) = '$selected_tahun'
+    ORDER BY p.id_pelanggan ASC
+";
+
                             $result = mysqli_query($conn, $query);
                             $no = 1;
                             while ($row = mysqli_fetch_assoc($result)) {
