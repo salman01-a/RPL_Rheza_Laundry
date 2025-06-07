@@ -1,11 +1,31 @@
-    <?php 
-    $page = 'dashboard'; 
+    <?php
+    $page = 'dashboard';
     include '../database/connection.php';
     session_start();
+
+    $bulan = isset($_GET['bulan']) ? $_GET['bulan'] : date('m');
+    $tahun = isset($_GET['tahun']) ? $_GET['tahun'] : date('Y');
+
+    $bulan_list = [
+        '01' => 'Januari',
+        '02' => 'Februari',
+        '03' => 'Maret',
+        '04' => 'April',
+        '05' => 'Mei',
+        '06' => 'Juni',
+        '07' => 'Juli',
+        '08' => 'Agustus',
+        '09' => 'September',
+        '10' => 'Oktober',
+        '11' => 'November',
+        '12' => 'Desember'
+    ];
+
+
     if (!isset($_SESSION['user_id'])) {
         header("Location: ../");
         exit();
-    }   
+    }
     ini_set('display_errors', 1);
     ini_set('display_startup_errors', 1);
     error_reporting(E_ALL);
@@ -99,7 +119,7 @@
                 font-weight: 600;
             }
 
-            .table > :not(caption) > * > * {
+            .table> :not(caption)>*>* {
                 vertical-align: middle;
             }
         </style>
@@ -107,10 +127,10 @@
 
     <body>
         <div class="d-flex">
-            <?php 
-            if($_SESSION['role'] == 'owner')
-                include '../layout/sidebar.php'; 
-            else 
+            <?php
+            if ($_SESSION['role'] == 'owner')
+                include '../layout/sidebar.php';
+            else
                 include '../layout/SidebarStaff.php';
             ?>
 
@@ -120,78 +140,93 @@
                     <div class="fw-semibold">Admin</div>
                 </div>
 
-                <?php if($_SESSION['role'] == 'owner') { ?>
-                <div class="row g-4 mb-4">
-                    <div class="col-md-3">
-                        <div class="card text-center shadow-sm">
-                            <div class="card-body">
-                                <i class="bi bi-people-fill icon-dashboard"></i>
-                                <h6>Total Pelanggan</h6>
-                                <h3 class="text-primary-custom"><?php echo $total_pelanggan; ?></h3>
+                <?php if ($_SESSION['role'] == 'owner') { ?>
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-3">
+                            <div class="card text-center shadow-sm">
+                                <div class="card-body">
+                                    <i class="bi bi-people-fill icon-dashboard"></i>
+                                    <h6>Total Pelanggan</h6>
+                                    <h3 class="text-primary-custom"><?php echo $total_pelanggan; ?></h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card text-center shadow-sm">
+                                <div class="card-body">
+                                    <i class="bi bi-currency-dollar icon-dashboard"></i>
+                                    <h6>Total Pendapatan</h6>
+                                    <h3 class="text-primary-custom">Rp <?php echo number_format($total_pendapatan, 0, ',', '.'); ?></h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card text-center shadow-sm">
+                                <div class="card-body">
+                                    <i class="bi bi-basket-fill icon-dashboard"></i>
+                                    <h6>Total Order</h6>
+                                    <h3 class="text-primary-custom"><?php echo $total_order; ?></h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card text-center shadow-sm">
+                                <div class="card-body">
+                                    <i class="bi bi-clock-history icon-dashboard"></i>
+                                    <h6>Order In Proses</h6>
+                                    <h3 class="text-primary-custom"><?php echo $order_processing; ?></h3>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-3">
-                        <div class="card text-center shadow-sm">
-                            <div class="card-body">
-                                <i class="bi bi-currency-dollar icon-dashboard"></i>
-                                <h6>Total Pendapatan</h6>
-                                <h3 class="text-primary-custom">Rp <?php echo number_format($total_pendapatan, 0, ',', '.'); ?></h3>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="card text-center shadow-sm">
-                            <div class="card-body">
-                                <i class="bi bi-basket-fill icon-dashboard"></i>
-                                <h6>Total Order</h6>
-                                <h3 class="text-primary-custom"><?php echo $total_order; ?></h3>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="card text-center shadow-sm">
-                            <div class="card-body">
-                                <i class="bi bi-clock-history icon-dashboard"></i>
-                                <h6>Order In Proses</h6>
-                                <h3 class="text-primary-custom"><?php echo $order_processing; ?></h3>
-                            </div>
-                        </div>
-                    </div>
-                </div>
                 <?php } else { ?>
-                <div class="row g-4 mb-4">
-                    <div class="col-md-3">
-                        <div class="card text-center shadow-sm">
-                            <div class="card-body">
-                                <i class="bi bi-people-fill icon-dashboard"></i>
-                                <h6>Total Pelanggan</h6>
-                                <h3 class="text-primary-custom"><?php echo $total_pelanggan; ?></h3>
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-3">
+                            <div class="card text-center shadow-sm">
+                                <div class="card-body">
+                                    <i class="bi bi-people-fill icon-dashboard"></i>
+                                    <h6>Total Pelanggan</h6>
+                                    <h3 class="text-primary-custom"><?php echo $total_pelanggan; ?></h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card text-center shadow-sm">
+                                <div class="card-body">
+                                    <i class="bi bi-clock-history icon-dashboard"></i>
+                                    <h6>Order In Proses</h6>
+                                    <h3 class="text-primary-custom"><?php echo $order_processing; ?></h3>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-3">
-                        <div class="card text-center shadow-sm">
-                            <div class="card-body">
-                                <i class="bi bi-clock-history icon-dashboard"></i>
-                                <h6>Order In Proses</h6>
-                                <h3 class="text-primary-custom"><?php echo $order_processing; ?></h3>
-                            </div>
-                        </div>
-                    </div>
-                </div>
                 <?php } ?>
 
                 <div class="card shadow-sm">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h5 class="mb-0">Detail Transaksi</h5>
-                            <select class="form-select w-auto">
-                                <option>Oktober</option>
-                                <option>November</option>
-                            </select>
-                        </div>
+                            <h5 class="mb-0">Detail Transaksi Bulan <?= $bulan_list[$bulan] ?> <?= $tahun ?></h5> 
+                            <form method="GET" class="d-flex align-items-center gap-2">
+                                <select name="bulan" class="form-select w-auto" onchange="this.form.submit()">
+                                    <?php
+                                    foreach ($bulan_list as $key => $value) {
+                                        $selected = ($bulan == $key) ? 'selected' : '';
+                                        echo "<option value='$key' $selected>$value</option>";
+                                    }
+                                    ?>
+                                </select>
 
+                                <select name="tahun" class="form-select w-auto" onchange="this.form.submit()">
+                                    <?php
+                                    $tahun_sekarang = date('Y');
+                                    for ($i = $tahun_sekarang; $i >= $tahun_sekarang - 5; $i--) {
+                                        $selected = ($tahun == $i) ? 'selected' : '';
+                                        echo "<option value='$i' $selected>$i</option>";
+                                    }
+                                    ?>
+                                </select>
+                            </form>
+                        </div>
                         <table class="table table-hover table-bordered">
                             <thead class="table-light">
                                 <tr>
@@ -205,21 +240,25 @@
                                 </tr>
                             </thead>
                             <tbody>
-    <?php
-    $no = 1;
-        $query_transaksi = "
-                 SELECT t.*, p.nama, d.jumlah_berat, l.nama_layanan 
-                        FROM Transaksi t
-                        JOIN Pelanggan p ON t.id_pelanggan = p.id_pelanggan
-                        JOIN Detail_Transaksi d ON d.id_transaksi = t.id_transaksi
-                        JOIN Layanan l ON l.id_layanan = d.id_layanan
-                        ORDER BY t.id_transaksi DESC
-        ";
-    $result_transaksi = mysqli_query($conn, $query_transaksi);
-    while ($row = mysqli_fetch_assoc($result_transaksi)) {
-        $status = $row['status_proses'];
-        $badge_class = $status === 'Completed' ? 'bg-success-custom' : ($status === 'Processing' ? 'bg-processing' : 'bg-secondary');
-        echo "<tr>
+                                <?php
+                                $no = 1;
+
+                                $query_transaksi = "
+    SELECT t.*, p.nama, d.jumlah_berat, l.nama_layanan 
+    FROM Transaksi t
+    JOIN Pelanggan p ON t.id_pelanggan = p.id_pelanggan
+    JOIN Detail_Transaksi d ON d.id_transaksi = t.id_transaksi
+    JOIN Layanan l ON l.id_layanan = d.id_layanan
+    WHERE MONTH(t.waktu_mulai) = '$bulan' AND YEAR(t.waktu_mulai) = '$tahun'
+    ORDER BY t.id_transaksi DESC
+";
+
+
+                                $result_transaksi = mysqli_query($conn, $query_transaksi);
+                                while ($row = mysqli_fetch_assoc($result_transaksi)) {
+                                    $status = $row['status_proses'];
+                                    $badge_class = $status === 'Completed' ? 'bg-success-custom' : ($status === 'Processing' ? 'bg-processing' : 'bg-secondary');
+                                    echo "<tr>
             <td>{$no}</td>
             <td>{$row['nama']}</td>
             <td>{$row['nama_layanan']}</td>
@@ -228,10 +267,10 @@
             <td>{$row['status_pembayaran']}</td>    
             <td><span class='badge $badge_class'>{$status}</span></td>
             </tr>";
-        $no++;
-    }
-    ?>
-</tbody>
+                                    $no++;
+                                }
+                                ?>
+                            </tbody>
                         </table>
                     </div>
                 </div>

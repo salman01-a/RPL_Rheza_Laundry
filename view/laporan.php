@@ -85,8 +85,8 @@ $total_pengeluaran = $total_operasional + $total_bahan_baku;
         }
     </style>
 </head>
-<body>
-<div class="d-flex">
+<body class="bg-light">
+<div class="d-flex min-vh-100">
     <?php 
         if($_SESSION['role'] == 'owner')
             include '../layout/sidebar.php'; 
