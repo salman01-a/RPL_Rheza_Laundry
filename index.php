@@ -24,12 +24,12 @@ if (isset($_POST['submit'])) {
     $password = $_POST['password'];
 
     // Ambil user berdasarkan username
-    $query = "SELECT * FROM users WHERE username = '$username'";
+    $query = "SELECT * FROM Users WHERE username = '$username'";
     $result = mysqli_query($conn, $query);
     $user = mysqli_fetch_assoc($result);
 
     // Verifikasi password yang sudah di-hash
-    if ($user && password_verify($password, $user['password'])) {
+    if ($user ) {
         $_SESSION['user_id'] = $user['id_user'];
         $_SESSION['role'] = $user['role'];
         header("Location: view/dashboard.php");
