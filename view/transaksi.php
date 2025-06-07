@@ -6,7 +6,9 @@ if (!isset($_SESSION['user_id'])) {
     header("Location: ../");
     exit();
 }
-
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 // Tambah transaksi
 if (isset($_POST['submit_all'])) {
     $nama = $_POST['nama_pelanggan'];
@@ -56,10 +58,31 @@ if (isset($_POST['update_transaksi'])) {
     $id = $_POST['id_transaksi'];
     $proses = $_POST['edit_status_proses'];
     $bayar = $_POST['edit_status_pembayaran'];
+
+    // Ambil data nomor HP & nama pelanggan jika status completed
+    if ($proses === 'Completed') {
+        include '../service/whatsappapi.php'; // lokasi file function tadi
+
+        $getPelanggan = mysqli_query($conn, "
+            SELECT p.no_hp, p.nama 
+            FROM Transaksi t
+            JOIN Pelanggan p ON t.id_pelanggan = p.id_pelanggan
+            WHERE t.id_transaksi = $id
+        ");
+        $pelanggan = mysqli_fetch_assoc($getPelanggan);
+        $nomor = $pelanggan['no_hp'];
+        $nama = $pelanggan['nama'];
+
+        // Panggil fungsi kirim WA
+        kirimPesanWA($nomor, $nama);
+    }
+
+    // Update database
     mysqli_query($conn, "UPDATE Transaksi SET status_proses='$proses', status_pembayaran='$bayar' WHERE id_transaksi=$id");
     header("Location: transaksi.php?updated=1");
     exit();
 }
+
 ?>
 
 <!DOCTYPE html>

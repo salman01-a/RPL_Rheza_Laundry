@@ -16,7 +16,11 @@ $query_order = "SELECT COUNT(*) AS total FROM Transaksi WHERE MONTH(waktu_mulai)
 $total_order = mysqli_fetch_assoc(mysqli_query($conn, $query_order))['total'] ?? 0;
 
 // Total Pelanggan
-$query_pelanggan = "SELECT COUNT(*) AS total FROM Pelanggan";
+$query_pelanggan = "
+    SELECT COUNT(*) AS total 
+    FROM Pelanggan 
+    WHERE MONTH(tanggal_dibuat) = '$bulan_ini' AND YEAR(tanggal_dibuat) = '$tahun_ini'
+";
 $total_pelanggan = mysqli_fetch_assoc(mysqli_query($conn, $query_pelanggan))['total'] ?? 0;
 
 // Total Berat
@@ -185,8 +189,158 @@ $total_pengeluaran = $total_operasional + $total_bahan_baku;
                     <h4 class="text-primary-custom">Rp <?= number_format($total_operasional, 0, ',', '.') ?></h4>
                 </div>
             </div>
+       
+     </div>
+
+     <!-- Rincian Operasional & Bahan Baku Berdampingan -->
+<div class="row mt-5">
+    <!-- Tabel Operasional -->
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5 class="fw-bold mb-3">Pengeluaran Operasional</h5>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>No</th>
+                                <th>Tanggal</th>
+                                <th>Jenis</th>
+                                <th>Nominal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php
+                            $no = 1;
+                            $query_detail_operasional = "
+                                SELECT * FROM Operasional 
+                                WHERE MONTH(tanggal_pengeluaran) = '$bulan_ini' AND YEAR(tanggal_pengeluaran) = '$tahun_ini'
+                                ORDER BY tanggal_pengeluaran DESC
+                            ";
+                            $result_detail = mysqli_query($conn, $query_detail_operasional);
+                            while ($row = mysqli_fetch_assoc($result_detail)) {
+                                echo "<tr>
+                                        <td>{$no}</td>
+                                        <td>" . date('d-m-Y', strtotime($row['tanggal_pengeluaran'])) . "</td>
+                                        <td>{$row['jenis_pengeluaran']}</td>
+                                        <td>Rp " . number_format($row['nominal_pengeluaran'], 0, ',', '.') . "</td>
+                                      </tr>";
+                                $no++;
+                            }
+
+                            if ($no === 1) {
+                                echo "<tr><td colspan='4' class='text-center'>Tidak ada data.</td></tr>";
+                            }
+                            ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabel Bahan Baku -->
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5 class="fw-bold mb-3">Pemasokan Bahan Baku</h5>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>No</th>
+                                <th>Tanggal</th>
+                                <th>Nama Barang</th>
+                                <th>Stok</th>
+                                <th>Harga</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php
+                            $no = 1;
+                            $query_bahan_detail = "
+                                SELECT * FROM Bahan_Baku
+                                WHERE MONTH(tanggal_update) = '$bulan_ini' AND YEAR(tanggal_update) = '$tahun_ini'
+                                ORDER BY tanggal_update DESC
+                            ";
+                            $result_bahan = mysqli_query($conn, $query_bahan_detail);
+                            while ($row = mysqli_fetch_assoc($result_bahan)) {
+                                echo "<tr>
+                                        <td>{$no}</td>
+                                        <td>" . date('d-m-Y', strtotime($row['tanggal_update'])) . "</td>
+                                        <td>{$row['nama_barang']}</td>
+                                        <td>{$row['jumlah_stok']}</td>
+                                        <td>Rp " . number_format($row['harga'], 0, ',', '.') . "</td>
+                                      </tr>";
+                                $no++;
+                            }
+
+                            if ($no === 1) {
+                                echo "<tr><td colspan='5' class='text-center'>Tidak ada data.</td></tr>";
+                            }
+                            ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 </div>
+<!-- Rincian Pelanggan dan Transaksi Bulan Ini -->
+<div class="card mt-5 shadow-sm">
+    <div class="card-body">
+        <h5 class="fw-bold mb-3">Rincian Transaksi Pelanggan Bulan <?= $bulan_ini ?>/<?= $tahun_ini ?></h5>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>No</th>
+                        <th>Nama Pelanggan</th>
+                        <th>Jumlah Berat (Kg)</th>
+                        <th>Total Harga</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    $no = 1;
+                    $query_pelanggan_transaksi = "
+                        SELECT p.nama, 
+                               SUM(d.jumlah_berat) AS total_berat, 
+                               SUM(t.total_harga) AS total_harga
+                        FROM Transaksi t
+                        JOIN Pelanggan p ON p.id_pelanggan = t.id_pelanggan
+                        JOIN Detail_Transaksi d ON d.id_transaksi = t.id_transaksi
+                        WHERE MONTH(t.waktu_mulai) = '$bulan_ini' AND YEAR(t.waktu_mulai) = '$tahun_ini'
+                        GROUP BY p.id_pelanggan
+                        ORDER BY p.nama ASC
+                    ";
+
+                    $result_pelanggan = mysqli_query($conn, $query_pelanggan_transaksi);
+                    while ($row = mysqli_fetch_assoc($result_pelanggan)) {
+                        echo "<tr>
+                                <td>{$no}</td>
+                                <td>{$row['nama']}</td>
+                                <td>" . number_format($row['total_berat'], 2) . " Kg</td>
+                                <td>Rp " . number_format($row['total_harga'], 0, ',', '.') . "</td>
+                              </tr>";
+                        $no++;
+                    }
+
+                    if ($no === 1) {
+                        echo "<tr><td colspan='4' class='text-center'>Tidak ada transaksi bulan ini.</td></tr>";
+                    }
+                    ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+    </div>
+
+
+    
+</div>
+
 </body>
 </html>
