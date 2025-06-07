@@ -1,33 +1,27 @@
 <?php
+function kirimPesanWA($nomor, $nama, $role = "Customer") {
+    $curl = curl_init();
 
-$curl = curl_init();
+    curl_setopt_array($curl, array(
+        CURLOPT_URL => 'https://api.fonnte.com/send',
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_ENCODING => '',
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 0,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => 'POST',
+        CURLOPT_POSTFIELDS => array(
+            'target' => "$nomor|$nama|$role",
+            'message' => "Halo {name}, pesanan laundry Anda telah selesai. Terima kasih!",
+        ),
+        CURLOPT_HTTPHEADER => array(
+            'Authorization: TJ1jp5F1bi7rvbs4dub9' // Ganti dengan token asli
+        ),
+    ));
 
-curl_setopt_array($curl, array(
-  CURLOPT_URL => 'https://api.fonnte.com/send',
-  CURLOPT_RETURNTRANSFER => true,
-  CURLOPT_ENCODING => '',
-  CURLOPT_MAXREDIRS => 10,
-  CURLOPT_TIMEOUT => 0,
-  CURLOPT_FOLLOWLOCATION => true,
-  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-  CURLOPT_CUSTOMREQUEST => 'POST',
-  CURLOPT_POSTFIELDS => array(
-'target' => '08123456789|Fonnte|Admin,08123456789|Lili|User',
-'message' => 'test message to {name} as {var1}',
-
-),
-  CURLOPT_HTTPHEADER => array(
-    'Authorization: TOKEN'
-  ),
-));
-
-$response = curl_exec($curl);
-if (curl_errno($curl)) {
-  $error_msg = curl_error($curl);
+    $response = curl_exec($curl);
+    curl_close($curl);
+    return $response;
 }
-curl_close($curl);
-
-if (isset($error_msg)) {
- echo $error_msg;
-}
-echo $response;
+?>
