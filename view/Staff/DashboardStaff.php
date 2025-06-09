@@ -140,6 +140,7 @@
                                 <td>5Kg</td>
                                 <td>Cashless</td>
                                 <td><span class="badge bg-success-custom">Completed</span></td>
+
                             </tr>
                         </tbody>
                     </table>
