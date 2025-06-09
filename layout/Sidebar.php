@@ -1,6 +1,6 @@
         <div class="d-flex flex-column p-3 bg-white shadow" style="width: 280px; min-height: 100vh;">
             <a href="#" class="d-flex align-items-center mb-4 text-decoration-none">
-                <span class="fs-4 fw-bold text-dark">RhezaLaundry</span>
+                <span class="fs-4 fw-bold text-dark"><span class="rheza">Rheza</span>Laundry</span>
             </a>
             <ul class="nav nav-pills flex-column mb-auto">
                 <li><a href="dashboard.php" class="nav-link <?= ($page == 'dashboard') ? 'active' : '' ?>"><i class="bi bi-house-door me-2"></i>Dashboard</a></li>

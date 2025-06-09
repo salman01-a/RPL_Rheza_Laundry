@@ -60,6 +60,10 @@ $total_pengeluaran = $total_operasional + $total_bahan_baku;
             background-color: #F8F9FC;
         }
 
+        .rheza {
+                color: #4880FF;
+            }
+
         .icon-dashboard {
             font-size: 2rem;
             color: #4880FF;

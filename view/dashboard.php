@@ -80,6 +80,10 @@
                 background-color: #F8F9FC;
             }
 
+            .rheza {
+                color: #4880FF;
+            }
+
             .text-primary-custom {
                 color: #4880FF;
                 font-weight: 700;
