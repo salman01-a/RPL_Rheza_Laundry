@@ -75,6 +75,10 @@ if (isset($_GET['id_hapus'])) {
             font-weight: 700;
         }
 
+        .rheza {
+                color: #4880FF;
+            }
+
         .card {
             border: none;
             border-radius: 15px;

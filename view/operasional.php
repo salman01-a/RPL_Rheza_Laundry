@@ -85,6 +85,10 @@ $data = $conn->query("SELECT * FROM Operasional ORDER BY tanggal_pengeluaran DES
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
     }
 
+    .rheza {
+                color: #4880FF;
+            }
+
     .btn-outline-primary {
       border-color: #4880FF;
       color: #4880FF;

@@ -71,6 +71,10 @@ $data = $conn->query("SELECT * FROM Bahan_Baku ORDER BY id_bahan_baku DESC");
             font-family: 'Nunito Sans', sans-serif;
         }
 
+        .rheza {
+                color: #4880FF;
+            }
+
         .card {
             border-radius: 1rem;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);

@@ -32,6 +32,10 @@ if (!isset($_SESSION['user_id'])) {
             font-weight: 700;
         }
 
+        .rheza {
+                color: #4880FF;
+            }
+
         .card {
             border: none;
             border-radius: 15px;
