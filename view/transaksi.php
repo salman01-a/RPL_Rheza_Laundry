@@ -99,6 +99,7 @@
         <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
         <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="../style/DashboardOwner.css">
+        <link rel="shortcut icon" href="../assets/logo.png" type="image/x-icon">
         <style>
             .rheza {
                     color: #4880FF;
@@ -218,34 +219,34 @@
                     </tbody>
                 </table>
             </div>
-            <?php if ($total_pages > 1): ?>
-<nav>
-    <ul class="pagination justify-content-center mt-3">
-        <?php
-        $range = 2; // tampil 2 halaman sebelum dan sesudah
-        $start = max(1, $page - $range);
-        $end = min($total_pages, $page + $range);
+                <?php if ($total_pages > 1): ?>
+    <nav>
+        <ul class="pagination justify-content-center mt-3">
+            <?php
+            $range = 2; // tampil 2 halaman sebelum dan sesudah
+            $start = max(1, $page - $range);
+            $end = min($total_pages, $page + $range);
 
-        // tombol pertama
-        if ($start > 1) {
-            echo '<li class="page-item"><a class="page-link" href="?page=1">1</a></li>';
-            if ($start > 2) echo '<li class="page-item disabled"><span class="page-link">...</span></li>';
-        }
+            // tombol pertama
+            if ($start > 1) {
+                echo '<li class="page-item"><a class="page-link" href="?page=1">1</a></li>';
+                if ($start > 2) echo '<li class="page-item disabled"><span class="page-link">...</span></li>';
+            }
 
-        for ($i = $start; $i <= $end; $i++) {
-            $active = ($i == $page) ? 'active' : '';
-            echo "<li class='page-item $active'><a class='page-link' href='?page=$i'>$i</a></li>";
-        }
+            for ($i = $start; $i <= $end; $i++) {
+                $active = ($i == $page) ? 'active' : '';
+                echo "<li class='page-item $active'><a class='page-link' href='?page=$i'>$i</a></li>";
+            }
 
-        // tombol terakhir
-        if ($end < $total_pages) {
-            if ($end < $total_pages - 1) echo '<li class="page-item disabled"><span class="page-link">...</span></li>';
-            echo "<li class='page-item'><a class='page-link' href='?page=$total_pages'>$total_pages</a></li>";
-        }
-        ?>
-    </ul>
-</nav>
-<?php endif; ?>
+            // tombol terakhir
+            if ($end < $total_pages) {
+                if ($end < $total_pages - 1) echo '<li class="page-item disabled"><span class="page-link">...</span></li>';
+                echo "<li class='page-item'><a class='page-link' href='?page=$total_pages'>$total_pages</a></li>";
+            }
+            ?>
+        </ul>
+    </nav>
+    <?php endif; ?>
 
             <?= $modals ?>
         </div>

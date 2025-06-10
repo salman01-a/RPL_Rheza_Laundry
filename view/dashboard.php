@@ -74,6 +74,8 @@
         <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
         <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="../style/DashboardOwner.css">
+        <link rel="shortcut icon" href="../assets/logo.png" type="image/x-icon">
+
         <style>
             body {
                 font-family: 'Nunito Sans', sans-serif;

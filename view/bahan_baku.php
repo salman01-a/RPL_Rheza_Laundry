@@ -65,6 +65,8 @@ $data = $conn->query("SELECT * FROM Bahan_Baku ORDER BY id_bahan_baku DESC");
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../style/DashboardOwner.css">
+    <link rel="shortcut icon" href="../assets/logo.png" type="image/x-icon">
+
     <style>
         body {
             background: #F8F9FC;
