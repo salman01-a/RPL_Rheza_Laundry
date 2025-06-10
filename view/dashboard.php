@@ -254,7 +254,7 @@
     JOIN Detail_Transaksi d ON d.id_transaksi = t.id_transaksi
     JOIN Layanan l ON l.id_layanan = d.id_layanan
     WHERE MONTH(t.waktu_mulai) = '$bulan' AND YEAR(t.waktu_mulai) = '$tahun'
-    ORDER BY t.id_transaksi DESC
+    ORDER BY t.id_transaksi DESC Limit 7
 ";
 
 

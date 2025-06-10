@@ -3,13 +3,50 @@ $page = 'pelanggan';
 include '../database/connection.php';
 session_start();
 
-$selected_bulan = isset($_GET['bulan']) ? $_GET['bulan'] : date('m');
-$selected_tahun = isset($_GET['tahun']) ? $_GET['tahun'] : date('Y');
-
 if (!isset($_SESSION['user_id'])) {
     header("Location: ../");
     exit();
 }
+
+// Filter bulan & tahun
+$selected_bulan = isset($_GET['bulan']) ? $_GET['bulan'] : date('m');
+$selected_tahun = isset($_GET['tahun']) ? $_GET['tahun'] : date('Y');
+
+// Pagination
+$limit = 15;
+$page_number = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$offset = ($page_number - 1) * $limit;
+
+// Daftar nama bulan
+$bulan_list = [
+    '01' => 'Januari', '02' => 'Februari', '03' => 'Maret',
+    '04' => 'April', '05' => 'Mei', '06' => 'Juni',
+    '07' => 'Juli', '08' => 'Agustus', '09' => 'September',
+    '10' => 'Oktober', '11' => 'November', '12' => 'Desember'
+];
+
+// Hitung total data
+$count_query = "
+    SELECT COUNT(DISTINCT p.id_pelanggan) AS total 
+    FROM pelanggan p
+    JOIN transaksi t ON p.id_pelanggan = t.id_pelanggan
+    WHERE MONTH(t.waktu_mulai) = '$selected_bulan' AND YEAR(t.waktu_mulai) = '$selected_tahun'
+";
+$count_result = mysqli_query($conn, $count_query);
+$total_rows = mysqli_fetch_assoc($count_result)['total'];
+$total_pages = ceil($total_rows / $limit);
+
+// Query data dengan limit
+$query = "
+    SELECT DISTINCT p.* 
+    FROM pelanggan p
+    JOIN transaksi t ON p.id_pelanggan = t.id_pelanggan
+    WHERE MONTH(t.waktu_mulai) = '$selected_bulan' AND YEAR(t.waktu_mulai) = '$selected_tahun'
+    ORDER BY p.id_pelanggan ASC
+    LIMIT $limit OFFSET $offset
+";
+
+$result = mysqli_query($conn, $query);
 ?>
 
 <!DOCTYPE html>
@@ -33,8 +70,8 @@ if (!isset($_SESSION['user_id'])) {
         }
 
         .rheza {
-                color: #4880FF;
-            }
+            color: #4880FF;
+        }
 
         .card {
             border: none;
@@ -57,8 +94,7 @@ if (!isset($_SESSION['user_id'])) {
             width: 250px;
         }
 
-        .table td,
-        .table th {
+        .table td, .table th {
             vertical-align: middle;
         }
 
@@ -73,7 +109,6 @@ if (!isset($_SESSION['user_id'])) {
         }
     </style>
 </head>
-
 <body>
 <div class="d-flex">
     <?php
@@ -107,12 +142,6 @@ if (!isset($_SESSION['user_id'])) {
                 <form method="GET" class="d-flex align-items-center gap-2 mb-3">
                     <select name="bulan" class="form-select dropdown-month" onchange="this.form.submit()">
                         <?php
-                        $bulan_list = [
-                            '01' => 'Januari', '02' => 'Februari', '03' => 'Maret',
-                            '04' => 'April', '05' => 'Mei', '06' => 'Juni',
-                            '07' => 'Juli', '08' => 'Agustus', '09' => 'September',
-                            '10' => 'Oktober', '11' => 'November', '12' => 'Desember'
-                        ];
                         foreach ($bulan_list as $key => $val) {
                             $selected = ($selected_bulan == $key) ? 'selected' : '';
                             echo "<option value='$key' $selected>$val</option>";
@@ -134,41 +163,70 @@ if (!isset($_SESSION['user_id'])) {
                 <!-- Table -->
                 <table class="table table-hover table-bordered" id="pelangganTable">
                     <thead>
-                        <tr>
-                            <th>No</th>
-                            <th>Nama</th>
-                            <th>No HP</th>
-                            <th>Alamat</th>
-                        </tr>
+                    <tr>
+                        <th>No</th>
+                        <th>Nama</th>
+                        <th>No HP</th>
+                        <th>Alamat</th>
+                    </tr>
                     </thead>
                     <tbody>
-                        <?php
-                        $query = "
-                            SELECT DISTINCT p.* 
-                            FROM pelanggan p
-                            JOIN transaksi t ON p.id_pelanggan = t.id_pelanggan
-                            WHERE MONTH(t.waktu_mulai) = '$selected_bulan' AND YEAR(t.waktu_mulai) = '$selected_tahun'
-                            ORDER BY p.id_pelanggan ASC
-                        ";
+                    <?php
+                    $no = $offset + 1;
+                    while ($row = mysqli_fetch_assoc($result)) {
+                        echo "<tr>
+                            <td>{$no}</td>
+                            <td>{$row['nama']}</td>
+                            <td>{$row['no_hp']} <a href='https://wa.me/62" . substr($row['no_hp'], 1) . "' target='_blank'><i class='bi bi-whatsapp whatsapp-icon ms-2'></i></a></td>
+                            <td>{$row['alamat']}</td>
+                        </tr>";
+                        $no++;
+                    }
 
-                        $result = mysqli_query($conn, $query);
-                        $no = 1;
-                        while ($row = mysqli_fetch_assoc($result)) {
-                            echo "<tr>
-                                <td>{$no}</td>
-                                <td>{$row['nama']}</td>
-                                <td>{$row['no_hp']} <a href='https://wa.me/62" . substr($row['no_hp'], 1) . "' target='_blank'><i class='bi bi-whatsapp whatsapp-icon ms-2'></i></a></td>
-                                <td>{$row['alamat']}</td>
-                            </tr>";
-                            $no++;
-                        }
-
-                        if ($no === 1) {
-                            echo "<tr><td colspan='4' class='text-center'>Tidak ada pelanggan bulan ini.</td></tr>";
-                        }
-                        ?>
+                    if ($no === $offset + 1) {
+                        echo "<tr><td colspan='4' class='text-center'>Tidak ada pelanggan bulan ini.</td></tr>";
+                    }
+                    ?>
                     </tbody>
                 </table>
+
+                <?php if ($total_pages > 1): ?>
+<nav>
+    <ul class="pagination justify-content-center mt-3">
+        <?php
+        $range = 2; // jumlah halaman sebelum dan sesudah halaman aktif
+        $start = max(1, $page_number - $range);
+        $end = min($total_pages, $page_number + $range);
+
+        // Tampilkan halaman pertama
+        if ($start > 1) {
+            $first_params = http_build_query(['bulan' => $selected_bulan, 'tahun' => $selected_tahun, 'page' => 1]);
+            echo "<li class='page-item'><a class='page-link' href='?$first_params'>1</a></li>";
+            if ($start > 2) {
+                echo "<li class='page-item disabled'><span class='page-link'>...</span></li>";
+            }
+        }
+
+        // Halaman tengah (sekitar aktif)
+        for ($i = $start; $i <= $end; $i++) {
+            $active = ($i == $page_number) ? 'active' : '';
+            $params = http_build_query(['bulan' => $selected_bulan, 'tahun' => $selected_tahun, 'page' => $i]);
+            echo "<li class='page-item $active'><a class='page-link' href='?$params'>$i</a></li>";
+        }
+
+        // Tampilkan halaman terakhir
+        if ($end < $total_pages) {
+            if ($end < $total_pages - 1) {
+                echo "<li class='page-item disabled'><span class='page-link'>...</span></li>";
+            }
+            $last_params = http_build_query(['bulan' => $selected_bulan, 'tahun' => $selected_tahun, 'page' => $total_pages]);
+            echo "<li class='page-item'><a class='page-link' href='?$last_params'>$total_pages</a></li>";
+        }
+        ?>
+    </ul>
+</nav>
+<?php endif; ?>
+
 
             </div>
         </div>
