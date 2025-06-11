@@ -10,7 +10,7 @@
         <li><a href="bahan_baku.php" class="nav-link <?= ($page == 'bahan_baku') ? 'active' : '' ?>"><i class="bi bi-droplet me-2"></i>Bahan Baku</a></li>
     </ul>
     <hr>
-    <a href="#" class="text-decoration-none d-flex align-items-center nav-link">
+    <a href="setting.php" class="text-decoration-none d-flex align-items-center nav-link <?= ($page == 'setting') ? 'active' : '' ?>">
         <i class="bi bi-gear me-2"></i><span>Settings</span>
     </a>
     <a href="../layout/Logout.php" class="text-decoration-none d-flex align-items-center nav-link mt-2">

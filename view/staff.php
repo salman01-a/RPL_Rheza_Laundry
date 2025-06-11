@@ -72,10 +72,7 @@ if (isset($_GET['id_hapus'])) {
             background-color: #F8F9FC;
         }
 
-        .text-primary-custom {
-            color: #4880FF;
-            font-weight: 700;
-        }
+        
 
         .rheza {
                 color: #4880FF;

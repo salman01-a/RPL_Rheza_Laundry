@@ -14,7 +14,7 @@
         <li><a href="staff.php" class="nav-link <?= ($page == 'staff') ? 'active' : '' ?>"><i class="bi bi-person me-2"></i>Staff</a></li>
     </ul>
     <hr>
-    <a href="setting.php" class="text-decoration-none d-flex align-items-center nav-link <?= ($page == 'settings') ? 'active' : '' ?>">
+    <a href="setting.php" class="text-decoration-none d-flex align-items-center nav-link <?= ($page == 'setting') ? 'active' : '' ?>">
         <i class="bi bi-gear me-2"></i><span>Settings</span>
     </a>
     <a href="../layout/Logout.php" class="text-decoration-none d-flex align-items-center nav-link mt-2">
