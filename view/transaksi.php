@@ -135,7 +135,7 @@
                         <table class="table table-bordered table-hover align-middle" id="transaksiTable">
                             <thead class="table-light">
                                 <tr>
-                                    <th>#</th>
+                                    <th>N0</th>
                                     <th>Pelanggan</th>
                                     <th>Layanan</th>
                                     <th>Berat</th>

@@ -241,8 +241,8 @@
                                     <th>Layanan</th>
                                     <th>Berat Cucian</th>
                                     <th>Metode Pembayaran</th>
-                                    <th>Status</th>
                                     <th>Status Pembayaran</th>
+                                    <th>Status</th>
                                 </tr>
                             </thead>
                             <tbody>
