@@ -125,7 +125,7 @@ $data = $conn->query("SELECT * FROM Operasional ORDER BY tanggal_pengeluaran DES
       include '../layout/SidebarStaff.php';
     ?>
 
-    <div class="p-4 flex-grow-1 w-100">
+    <div class="p-4 flex-grow-1 w-100" style="margin-left: 280px; padding: 20px;">
       <?php if (isset($_GET['success'])): ?>
         <div class="alert alert-success alert-dismissible fade show" role="alert">
           <?php

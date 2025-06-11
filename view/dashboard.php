@@ -140,7 +140,7 @@
                 include '../layout/SidebarStaff.php';
             ?>
 
-            <div class="p-4 flex-grow-1 w-100">
+            <div class="p-4 flex-grow-1 w-100" style="margin-left: 280px; padding: 20px">
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h3 class="fw-bold">Dashboard</h3>
                     <div class="fw-semibold">Admin</div>

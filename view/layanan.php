@@ -131,7 +131,7 @@ if (isset($_GET['id_hapus'])) {
     <div class="d-flex">
         <?php include '../layout/sidebar.php'; ?>
 
-        <div class="p-4 flex-grow-1 w-100">
+        <div class="p-4 flex-grow-1 w-100" style="margin-left: 280px; padding: 20px;">
             <!-- Header -->
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h3 class="section-title">Layanan</h3>
