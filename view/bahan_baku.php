@@ -131,7 +131,7 @@ $data = $conn->query("SELECT * FROM Bahan_Baku ORDER BY id_bahan_baku DESC");
 
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h3 class="fw-bold">Bahan Baku</h3>
-                <div class="fw-semibold"><?= $_SESSION['role'] ?></div>
+                <div class="fw-semibold"><?= ucfirst($_SESSION['role']) ?></div>
             </div>
 
             <div class="card p-4">

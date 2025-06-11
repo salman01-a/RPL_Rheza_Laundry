@@ -1,4 +1,4 @@
-<div class="d-flex flex-column p-3 bg-white shadow" style="width: 280px; height: 100vh;">
+<div class="bg-white shadow p-3" style="width: 280px; min-height: 100vh; position: fixed; top: 0; left: 0; z-index: 1000;">
     <a href="#" class="d-flex align-items-center mb-4 text-decoration-none">
         <span class="fs-4 fw-bold text-dark"><span class="rheza">Rheza</span>Laundry</span>
     </a>

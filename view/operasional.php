@@ -138,7 +138,7 @@ $data = $conn->query("SELECT * FROM Operasional ORDER BY tanggal_pengeluaran DES
       <?php endif; ?>
       <div class="d-flex justify-content-between align-items-center mb-4">
         <h3 class="fw-bold">Operasional</h3>
-        <div class="fw-semibold"><?= $_SESSION['role'] ?></div>
+        <div class="fw-semibold"><?= ucfirst($_SESSION['role']) ?></div>
       </div>
 
       <div class="card p-4">
