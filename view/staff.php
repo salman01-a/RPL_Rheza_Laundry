@@ -76,7 +76,7 @@ if (isset($_GET['id_hapus'])) {
             color: #4880FF;
             font-weight: 700;
         }
-        
+     
         .rheza {
                 color: #4880FF;
             }

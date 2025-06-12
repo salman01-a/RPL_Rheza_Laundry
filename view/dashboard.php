@@ -241,6 +241,7 @@
                                     <th>Layanan</th>
                                     <th>Berat Cucian</th>
                                     <th>Metode Pembayaran</th>
+                                    <th>Total Harga</th>
                                     <th>Status Pembayaran</th>
                                     <th>Status</th>
                                 </tr>
@@ -270,6 +271,7 @@
             <td>{$row['nama_layanan']}</td>
             <td>{$row['jumlah_berat']}Kg</td>
             <td>{$row['metode_pembayaran']}</td>
+            <td>{$row['total_harga']}</td>
             <td>{$row['status_pembayaran']}</td>    
             <td><span class='badge $badge_class'>{$status}</span></td>
             </tr>";

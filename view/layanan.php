@@ -3,6 +3,9 @@ $page = 'layanan';
 include '../database/connection.php';
 session_start();
 
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 'owner') {
     header("Location: ../");
     exit();
@@ -13,19 +16,20 @@ $result = mysqli_query($conn, $query);
 
 if (isset($_POST['submit_all'])) {
     $nama = mysqli_real_escape_string($conn, $_POST['nama_layanan']);
+    $harga = intval($_POST['harga']); // pastikan hanya angka
     $id = $_POST['id_layanan'];
 
     if (!empty($id)) {
         // Edit
-        $query = "UPDATE layanan SET nama_layanan = '$nama' WHERE id_layanan = $id";
+        $query = "UPDATE layanan SET nama_layanan = '$nama', harga_layanan = $harga WHERE id_layanan = $id";
         mysqli_query($conn, $query);
-        header("Location: layanan.php?success=edit");  // untuk tambah
+        header("Location: layanan.php?success=edit");
         exit();
     } else {
         // Tambah
-        $query = "INSERT INTO layanan (nama_layanan) VALUES ('$nama')";
+        $query = "INSERT INTO layanan (nama_layanan, harga_layanan) VALUES ('$nama', $harga)";
         mysqli_query($conn, $query);
-        header("Location: layanan.php?success=add"); // untuk tambah
+        header("Location: layanan.php?success=add");
         exit();
     }
 }
@@ -157,37 +161,40 @@ if (isset($_GET['id_hapus'])) {
 
                     <h5 class="fw-bold mb-3">Daftar Layanan</h5>
                     <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>No</th>
-                                <th>Nama</th>
-                                <th class="text-center">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php $no = 1;
-                            while ($row = mysqli_fetch_assoc($result)) : ?>
-                                <tr>
-                                    <td><?= $no++; ?></td>
-                                    <td><?= $row['nama_layanan']; ?></td>
-                                    <td class="text-center">
-                                        <div class="d-inline-flex border rounded-3 overflow-hidden bg-light">
-                                            <a class="d-flex align-items-center justify-content-center px-3 py-2 text-secondary" onclick="editLayanan(<?= $row['id_layanan']; ?>, '<?= $row['nama_layanan']; ?>')" data-bs-toggle="modal" data-bs-target="#modalLayanan">
-                                                <i class="bi bi-pencil-square fs-10"></i>
-                                            </a>
+                    <thead>
+    <tr>
+        <th>No</th>
+        <th>Nama</th>
+        <th>Harga</th>
+        <th class="text-center">Action</th>
+    </tr>
+</thead>
+<tbody>
+    <?php $no = 1;
+    while ($row = mysqli_fetch_assoc($result)) : ?>
+        <tr>
+            <td><?= $no++; ?></td>
+            <td><?= $row['nama_layanan']; ?></td>
+            <td>Rp<?= number_format($row['harga_layanan'], 0, ',', '.'); ?></td>
+            <td class="text-center">
+                <div class="d-inline-flex border rounded-3 overflow-hidden bg-light">
+                    <a class="d-flex align-items-center justify-content-center px-3 py-2 text-secondary"
+                        onclick="editLayanan(<?= $row['id_layanan']; ?>, '<?= $row['nama_layanan']; ?>', <?= $row['harga_layanan']; ?>)"
+                        data-bs-toggle="modal" data-bs-target="#modalLayanan">
+                        <i class="bi bi-pencil-square fs-10"></i>
+                    </a>
 
-                                            <div class="border-start"></div>
-                                            <a href="layanan.php?id_hapus=<?= $row['id_layanan']; ?>"
-                                                class="d-flex align-items-center justify-content-center px-3 py-2 text-danger"
-                                                title="Hapus"
-                                                onclick="return confirm('Hapus layanan ini?')">
-                                                <i class="bi bi-trash3 fs-10"></i>
-                                            </a>
-                                        </div>
-                                    </td>
-
-                                </tr>
-                            <?php endwhile; ?>
+                    <div class="border-start"></div>
+                    <a href="layanan.php?id_hapus=<?= $row['id_layanan']; ?>"
+                        class="d-flex align-items-center justify-content-center px-3 py-2 text-danger"
+                        title="Hapus"
+                        onclick="return confirm('Hapus layanan ini?')">
+                        <i class="bi bi-trash3 fs-10"></i>
+                    </a>
+                </div>
+            </td>
+        </tr>
+    <?php endwhile; ?>
                             <?php if (mysqli_num_rows($result) === 0): ?>
                                 <tr>
                                     <td colspan="3" class="text-center text-muted">Belum ada data layanan.</td>
@@ -203,30 +210,37 @@ if (isset($_GET['id_hapus'])) {
 
     <!-- Modal Tambah/Edit Layanan -->
     <div class="modal fade" id="modalLayanan" tabindex="-1" aria-labelledby="modalLayananLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <form method="post" action="layanan.php">
-                <div class="modal-content border border-primary-subtle rounded shadow-sm">
-                    <div class="modal-body">
-                        <label class="form-label">Nama Layanan</label>
-                        <input type="hidden" name="id_layanan" id="idLayanan">
-                        <input type="text" class="form-control bg-light" placeholder="Nama Layanan" name="nama_layanan" id="namaLayanan" required>
-                    </div>
-                    <div class="modal-footer justify-content-between">
-                        <button type="submit" name="submit_all" class="btn btn-primary">Done</button>
-                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
-                    </div>
+    <div class="modal-dialog">
+        <form method="post" action="layanan.php">
+            <div class="modal-content border border-primary-subtle rounded shadow-sm">
+                <div class="modal-body">
+                    <label class="form-label">Nama Layanan</label>
+                    <input type="hidden" name="id_layanan" id="idLayanan">
+                    <input type="text" class="form-control bg-light mb-3" placeholder="Nama Layanan" name="nama_layanan" id="namaLayanan" required>
+
+                    <label class="form-label">Harga</label>
+                    <input type="number" class="form-control bg-light" placeholder="Harga Layanan" name="harga" id="harga" required>
                 </div>
-            </form>
-        </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="submit" name="submit_all" class="btn btn-primary">Done</button>
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </form>
     </div>
+</div>
 
 
-    <script>
-        function editLayanan(id, nama) {
-            document.getElementById('idLayanan').value = id;
-            document.getElementById('namaLayanan').value = nama;
-        }
-    </script>
+                                    
+        <script>
+    function editLayanan(id, nama, harga) {
+        document.getElementById('idLayanan').value = id;
+        document.getElementById('namaLayanan').value = nama;
+        document.getElementById('harga').value = harga;
+    }
+</script>
+
+
 
 
 
