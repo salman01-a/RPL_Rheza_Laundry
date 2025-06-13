@@ -64,25 +64,54 @@ if (isset($_GET['hapus'])) {
 
 // Update transaksi
 if (isset($_POST['update_transaksi'])) {
-    $id = $_POST['id_transaksi'];
-    $proses = $_POST['edit_status_proses'];
-    $bayar = $_POST['edit_status_pembayaran'];
+    $id_transaksi = (int)$_POST['id_transaksi'];
+    $id_pelanggan = (int)$_POST['id_pelanggan'];
 
-    if ($proses === 'Completed') {
+    $nama = mysqli_real_escape_string($conn, $_POST['edit_nama_pelanggan']);
+    $no_hp = mysqli_real_escape_string($conn, $_POST['edit_no_hp']);
+    $alamat = mysqli_real_escape_string($conn, $_POST['edit_alamat']);
+
+    $id_layanan = (int)$_POST['edit_id_layanan'];
+    $jumlah_berat = (float)$_POST['edit_jumlah_berat'];
+
+    // Ambil harga layanan
+    $getHarga = mysqli_query($conn, "SELECT harga_layanan FROM Layanan WHERE id_layanan = $id_layanan");
+    $hargaData = mysqli_fetch_assoc($getHarga);
+    $harga = $hargaData ? $hargaData['harga_layanan'] : 0;
+    $sub_total = $harga * $jumlah_berat;
+
+    $metode = mysqli_real_escape_string($conn, $_POST['edit_metode_pembayaran']);
+    $status_proses = mysqli_real_escape_string($conn, $_POST['edit_status_proses']);
+    $status_pembayaran = mysqli_real_escape_string($conn, $_POST['edit_status_pembayaran']);
+
+    // Update data pelanggan
+    $updatePelanggan = mysqli_query($conn, "
+        UPDATE Pelanggan 
+        SET nama='$nama', no_hp='$no_hp', alamat='$alamat' 
+        WHERE id_pelanggan=$id_pelanggan
+    ");
+
+    // Update transaksi
+    $updateTransaksi = mysqli_query($conn, "
+        UPDATE Transaksi 
+        SET metode_pembayaran='$metode', status_proses='$status_proses', status_pembayaran='$status_pembayaran', total_harga=$sub_total 
+        WHERE id_transaksi=$id_transaksi
+    ");
+
+    // Update detail transaksi
+    $updateDetail = mysqli_query($conn, "
+        UPDATE Detail_Transaksi 
+        SET id_layanan=$id_layanan, jumlah_berat=$jumlah_berat, sub_total=$sub_total 
+        WHERE id_transaksi=$id_transaksi
+    ");
+
+    // Kirim WhatsApp jika selesai
+    if ($status_proses === 'Completed') {
         include '../service/whatsappapi.php';
-        $getPelanggan = mysqli_query($conn, "
-            SELECT p.no_hp, p.nama 
-            FROM Transaksi t
-            JOIN Pelanggan p ON t.id_pelanggan = p.id_pelanggan
-            WHERE t.id_transaksi = $id
-        ");
-        $pelanggan = mysqli_fetch_assoc($getPelanggan);
-        $nomor = $pelanggan['no_hp'];
-        $nama = $pelanggan['nama'];
-        kirimPesanWA($nomor, $nama);
+        kirimPesanWA($no_hp, $nama);
     }
 
-    mysqli_query($conn, "UPDATE Transaksi SET status_proses='$proses', status_pembayaran='$bayar' WHERE id_transaksi=$id");
+    // Redirect jika sukses
     header("Location: transaksi.php?updated=1");
     exit();
 }
@@ -142,14 +171,15 @@ if (isset($_POST['update_transaksi'])) {
                 <tbody>
                     <?php
                     $query = mysqli_query($conn, "
-                       SELECT t.id_transaksi,p.nama AS pelanggan,l.nama_layanan,
-                 l.harga_layanan,d.jumlah_berat,d.sub_total,
-                 t.status_pembayaran,t.status_proses, t.metode_pembayaran
-          FROM Transaksi t
-          JOIN Pelanggan p ON t.id_pelanggan=p.id_pelanggan
-          JOIN Detail_Transaksi d ON d.id_transaksi=t.id_transaksi
-          JOIN Layanan l ON l.id_layanan=d.id_layanan
-          ORDER BY t.id_transaksi DESC LIMIT $limit OFFSET $offset
+                      SELECT t.id_transaksi, p.id_pelanggan, p.nama AS pelanggan, p.no_hp, p.alamat,
+           l.id_layanan, l.nama_layanan, l.harga_layanan,
+           d.jumlah_berat, d.sub_total,
+           t.status_pembayaran, t.status_proses, t.metode_pembayaran
+    FROM Transaksi t
+    JOIN Pelanggan p ON t.id_pelanggan=p.id_pelanggan
+    JOIN Detail_Transaksi d ON d.id_transaksi=t.id_transaksi
+    JOIN Layanan l ON l.id_layanan=d.id_layanan
+    ORDER BY t.id_transaksi DESC LIMIT $limit OFFSET $offset
                     ");
                     $no = 1 + $offset;
                     $modals = '';
@@ -179,38 +209,61 @@ if (isset($_POST['update_transaksi'])) {
                     </tr>
 
                     <?php
-                    $modals .= '
-                    <div class="modal fade" id="modalEdit' . $row['id_transaksi'] . '" tabindex="-1">
-                        <div class="modal-dialog">
-                            <form method="POST" class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title">Edit Transaksi</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <input type="hidden" name="id_transaksi" value="' . $row['id_transaksi'] . '">
-                                    <div class="mb-2">
-                                        <label>Status Proses</label>
-                                        <select name="edit_status_proses" class="form-control">
-                                            <option value="Processing" ' . ($row['status_proses'] == 'Processing' ? 'selected' : '') . '>Processing</option>
-                                            <option value="Completed" ' . ($row['status_proses'] == 'Completed' ? 'selected' : '') . '>Completed</option>
-                                            <option value="Rejected" ' . ($row['status_proses'] == 'Rejected' ? 'selected' : '') . '>Rejected</option>
-                                        </select>
-                                    </div>
-                                    <div class="mb-2">
-                                        <label>Status Pembayaran</label>
-                                        <select name="edit_status_pembayaran" class="form-control">
-                                            <option value="Belum Lunas" ' . ($row['status_pembayaran'] == 'Belum Lunas' ? 'selected' : '') . '>Belum Lunas</option>
-                                            <option value="Lunas" ' . ($row['status_pembayaran'] == 'Lunas' ? 'selected' : '') . '>Lunas</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="submit" name="update_transaksi" class="btn btn-success">Simpan</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>';
+                   $modals .= '
+                   <div class="modal fade" id="modalEdit' . $row['id_transaksi'] . '" tabindex="-1">
+                       <div class="modal-dialog modal-lg">
+                           <form method="POST" class="modal-content">
+                               <div class="modal-header">
+                                   <h5 class="modal-title">Edit Transaksi</h5>
+                                   <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                               </div>
+                               <div class="modal-body">
+                                   <input type="hidden" name="id_transaksi" value="' . $row['id_transaksi'] . '">
+                                   
+                                   <h6>Data Pelanggan</h6>
+                                   <input type="hidden" name="id_pelanggan" value="' . $row['id_pelanggan'] . '">
+                                   <div class="mb-2"><label>Nama</label><input type="text" name="edit_nama_pelanggan" class="form-control" value="' . $row['pelanggan'] . '" required></div>
+                                   <div class="mb-2"><label>No HP</label><input type="text" name="edit_no_hp" class="form-control" value="' . $row['no_hp'] . '"></div>
+                                   <div class="mb-3"><label>Alamat</label><textarea name="edit_alamat" class="form-control">' . $row['alamat'] . '</textarea></div>
+               
+                                   <h6>Data Laundry</h6>
+                                   <div class="mb-2">
+                                       <label>Layanan</label>
+                                       <select name="edit_id_layanan" class="form-control">';
+                                       $layanan_q = mysqli_query($conn, "SELECT * FROM Layanan");
+                                       while ($lay = mysqli_fetch_assoc($layanan_q)) {
+                                           $selected = ($lay['nama_layanan'] == $row['nama_layanan']) ? 'selected' : '';
+                                           $modals .= '<option value="' . $lay['id_layanan'] . '" ' . $selected . '>' . $lay['nama_layanan'] . '</option>';
+                                       }
+                   $modals .= '</select>
+                                   </div>
+                                   <div class="mb-2"><label>Berat (KG)</label><input type="number" name="edit_jumlah_berat" class="form-control" value="' . $row['jumlah_berat'] . '" required></div>
+                                   <div class="mb-2"><label>Metode Pembayaran</label>
+                                       <select name="edit_metode_pembayaran" class="form-control">
+                                           <option value="Tunai" ' . ($row['metode_pembayaran'] == 'Tunai' ? 'selected' : '') . '>Tunai</option>
+                                           <option value="Transfer" ' . ($row['metode_pembayaran'] == 'Transfer' ? 'selected' : '') . '>Transfer</option>
+                                       </select>
+                                   </div>
+                                   <div class="mb-2"><label>Status Proses</label>
+                                       <select name="edit_status_proses" class="form-control">
+                                           <option value="Processing" ' . ($row['status_proses'] == 'Processing' ? 'selected' : '') . '>Processing</option>
+                                           <option value="Completed" ' . ($row['status_proses'] == 'Completed' ? 'selected' : '') . '>Completed</option>
+                                           <option value="Rejected" ' . ($row['status_proses'] == 'Rejected' ? 'selected' : '') . '>Rejected</option>
+                                       </select>
+                                   </div>
+                                   <div class="mb-2"><label>Status Pembayaran</label>
+                                       <select name="edit_status_pembayaran" class="form-control">
+                                           <option value="Belum Lunas" ' . ($row['status_pembayaran'] == 'Belum Lunas' ? 'selected' : '') . '>Belum Lunas</option>
+                                           <option value="Lunas" ' . ($row['status_pembayaran'] == 'Lunas' ? 'selected' : '') . '>Lunas</option>
+                                       </select>
+                                   </div>
+                               </div>
+                               <div class="modal-footer">
+                                   <button type="submit" name="update_transaksi" class="btn btn-success">Simpan</button>
+                               </div>
+                           </form>
+                       </div>
+                   </div>';
                     endwhile;
                     ?>
                 </tbody>
