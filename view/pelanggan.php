@@ -169,6 +169,7 @@ $result = mysqli_query($conn, $query);
                         <th>Nama</th>
                         <th>No HP</th>
                         <th>Alamat</th>
+                        <th>Waktu Datang</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -180,6 +181,7 @@ $result = mysqli_query($conn, $query);
                             <td>{$row['nama']}</td>
                             <td>{$row['no_hp']} <a href='https://wa.me/62" . substr($row['no_hp'], 1) . "' target='_blank'><i class='bi bi-whatsapp whatsapp-icon ms-2'></i></a></td>
                             <td>{$row['alamat']}</td>
+                            <td>{$row['tanggal_dibuat']}</td>
                         </tr>";
                         $no++;
                     }
