@@ -158,9 +158,10 @@ if (isset($_GET['id_hapus'])) {
                         <tr>
                             <th>No</th>
                             <th>Nama</th>
+                            <th>Username</th>
                             <th>No Telepon</th>
                             <th>Password</th>
-                            <th class="text-center">Action</th>
+                            <th class="text-center">Action</th> 
                         </tr>
                     </thead>
                     <tbody>
@@ -169,6 +170,7 @@ if (isset($_GET['id_hapus'])) {
                         <tr>
                             <td><?= $no++; ?></td>
                             <td><?= htmlspecialchars($row['nama']); ?></td>
+                            <td><?= htmlspecialchars($row['username']); ?></td>
                             <td><?= htmlspecialchars($row['no_hp'] ?? '-') ?></td>
                             <td>
                                 <div class="input-group">

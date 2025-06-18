@@ -297,7 +297,7 @@ $total_pengeluaran = $total_operasional + $total_bahan_baku;
                     <div class="card text-center p-3">
                         <i class="bi bi-basket icon-dashboard"></i>
                         <h6>Total Berat</h6>
-                        <h4 class="text-primary-custom"><?= number_format($total_berat, 2) ?> Kg</h4>
+                        <h4 class="text-primary-custom"><?= number_format($total_berat, 2) ?> Lot</h4>
                     </div>
                 </div>
                 <div class="col-md-3">
@@ -427,7 +427,7 @@ $total_pengeluaran = $total_operasional + $total_bahan_baku;
                                 <tr>
                                     <th>No</th>
                                     <th>Nama Pelanggan</th>
-                                    <th>Jumlah Berat (Kg)</th>
+                                    <th>Jumlah Berat (Lot)</th>
                                     <th>Total Harga</th>
                                 </tr>
                             </thead>
@@ -451,7 +451,7 @@ $total_pengeluaran = $total_operasional + $total_bahan_baku;
                                     echo "<tr>
                                 <td>{$no}</td>
                                 <td>{$row['nama']}</td>
-                                <td>" . number_format($row['total_berat'], 2) . " Kg</td>
+                                <td>" . number_format($row['total_berat'], 2) . " Lot</td>
                                 <td>Rp " . number_format($row['total_harga'], 0, ',', '.') . "</td>
                               </tr>";
                                     $no++;
