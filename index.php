@@ -1,12 +1,12 @@
 <?php
 session_start();
 include 'database/connection.php';
-
+$gagal = false;
 if (isset($_GET['dev']) && $_GET['dev'] === 'create') {
     $nama = 'rheza';
     $no_hp = '08123456789';
     $username = 'admin';
-    $password = password_hash('admin123', PASSWORD_DEFAULT);
+    $password = 'admin123';
     $role = 'owner';
 
     // Cek apakah sudah ada owner
@@ -39,6 +39,9 @@ if (isset($_POST['submit'])) {
         exit();
     }
 }
+if (isset($_GET['pesan']) && $_GET['pesan'] == 'gagal'){
+  $gagal = true;
+}
 ?>
 
 
@@ -64,10 +67,12 @@ if (isset($_POST['submit'])) {
         </div>
         <div class="input-group">
           <input type="password" placeholder="PASSWORD" name= "password"required />
+          <p style="text-align: left; margin = 2px;"><?php echo($gagal)? "<span style='color:#fa1111;'>Username atau Password Salah</span>":""; ?></p>
         </div>
         <button type="submit" name="submit">LOGIN</button>
       </form>
     </div>
   </div>
+</body> 
 </body>
 </html>

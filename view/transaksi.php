@@ -58,7 +58,7 @@ if (isset($_GET['hapus'])) {
     $id = $_GET['hapus'];
     mysqli_query($conn, "DELETE FROM Detail_Transaksi WHERE id_transaksi=$id");
     mysqli_query($conn, "DELETE FROM Transaksi WHERE id_transaksi=$id");
-    header("Location: transaksi.php?deleted=1");
+    header("Location: transaksi.php?success=2");
     exit();
 }
 
@@ -107,12 +107,15 @@ if (isset($_POST['update_transaksi'])) {
 
     // Kirim WhatsApp jika selesai
     if ($status_proses === 'Completed') {
+        $getLayanan = mysqli_query($conn, "SELECT * FROM Layanan WHERE id_layanan = $id_layanan");
+        $Data = mysqli_fetch_assoc($getLayanan);
+        $layanan = $Data['nama_layanan'];
         include '../service/whatsappapi.php';
-        kirimPesanWA($no_hp, $nama);
+        kirimPesanWA($no_hp, $nama, $layanan, $jumlah_berat, $sub_total, $metode);
     }
 
     // Redirect jika sukses
-    header("Location: transaksi.php?updated=1");
+    header("Location: transaksi.php?success=3");
     exit();
 }
 ?>
@@ -126,6 +129,7 @@ if (isset($_POST['update_transaksi'])) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../style/DashboardOwner.css">
+    <link rel="shortcut icon" href="../assets/logo.png" type="image/x-icon">
     <style>
         body { font-family: 'Nunito Sans', sans-serif; background-color: #F8F9FC; }
         .rheza { color: #4880FF; }
@@ -140,20 +144,33 @@ if (isset($_POST['update_transaksi'])) {
     ?>
 
     <div class="p-4 flex-grow-1 w-100" style="margin-left: 280px; padding: 20px;">
+
+
+    <?php if (isset($_GET['success'])): ?>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+          <?php 
+          if ($_GET['success'] == '1') echo "Data Transaksi berhasil ditambahkan.";
+          elseif ($_GET['success'] == '3') echo "Data Transaksi berhasil diperbarui.";
+          elseif ($_GET['success'] == '2') echo "Data Transaksi berhasil dihapus.";
+          ?>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      <?php endif; ?>
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h3 class="fw-bold">Transaksi</h3>
             <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalTambahTransaksi">
                 <i class="bi bi-plus-circle me-1"></i>Tambah Transaksi
             </button>
         </div>
-
-        <!-- Search Bar -->
+   
+      
+    
+        <!-- Table -->
+        <div class="table-responsive bg-white rounded p-3 shadow-sm">
+              <!-- Search Bar -->
         <div class="d-flex justify-content-end mb-3">
             <input type="text" id="searchInput" class="form-control" placeholder="Cari pelanggan, layanan, atau status..." style="width: 300px;">
         </div>
-
-        <!-- Table -->
-        <div class="table-responsive bg-white rounded p-3 shadow-sm">
             <table class="table table-bordered table-hover align-middle" id="transaksiTable">
                 <thead class="table-light">
                     <tr>
@@ -190,7 +207,7 @@ if (isset($_POST['update_transaksi'])) {
                         <td><?= $no++ ?></td>
                         <td><?= $row['pelanggan'] ?></td>
                         <td><?= $row['nama_layanan'] ?></td>
-                        <td><?= $row['jumlah_berat'] ?> KG</td>
+                        <td><?= $row['jumlah_berat'] ?> Lot</td>
                         <td><?= $row['metode_pembayaran'] ?></td>
                         <td><?= $row['sub_total'] ?></td>
                         <td><?= $row['status_pembayaran'] ?></td>
@@ -237,7 +254,7 @@ if (isset($_POST['update_transaksi'])) {
                                        }
                    $modals .= '</select>
                                    </div>
-                                   <div class="mb-2"><label>Berat (KG)</label><input type="number" name="edit_jumlah_berat" class="form-control" value="' . $row['jumlah_berat'] . '" required></div>
+                                   <div class="mb-2"><label>Berat (Lot)</label><input type="number" name="edit_jumlah_berat" class="form-control" value="' . $row['jumlah_berat'] . '" required></div>
                                    <div class="mb-2"><label>Metode Pembayaran</label>
                                        <select name="edit_metode_pembayaran" class="form-control">
                                            <option value="Tunai" ' . ($row['metode_pembayaran'] == 'Tunai' ? 'selected' : '') . '>Tunai</option>
@@ -330,7 +347,7 @@ if (isset($_POST['update_transaksi'])) {
                             <?php endwhile; ?>
                         </select>
                     </div>
-                    <div class="mb-2"><label>Berat (KG)</label><input type="number" name="jumlah_berat" class="form-control" required></div>
+                    <div class="mb-2"><label>Berat (Lot)</label><input type="number" name="jumlah_berat" class="form-control" required></div>
                     <div class="mb-2"><label>Metode Pembayaran</label>
                         <select name="metode_pembayaran" class="form-control">
                             <option value="Cash">Cash</option>

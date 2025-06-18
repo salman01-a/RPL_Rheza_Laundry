@@ -269,7 +269,7 @@
             <td>{$no}</td>
             <td>{$row['nama']}</td>
             <td>{$row['nama_layanan']}</td>
-            <td>{$row['jumlah_berat']}Kg</td>
+            <td>{$row['jumlah_berat']} Lot</td>
             <td>{$row['metode_pembayaran']}</td>
             <td>{$row['total_harga']}</td>
             <td>{$row['status_pembayaran']}</td>    

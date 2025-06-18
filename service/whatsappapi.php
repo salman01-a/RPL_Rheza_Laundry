@@ -1,7 +1,7 @@
 <?php
-function kirimPesanWA($nomor, $nama, $role = "Customer") {
+function kirimPesanWA($nomor, $nama, $layanan, $berat, $total, $metodepembayaran) {
     $curl = curl_init();
-
+    $role = "Customer";
     curl_setopt_array($curl, array(
         CURLOPT_URL => 'https://api.fonnte.com/send',
         CURLOPT_RETURNTRANSFER => true,
@@ -13,7 +13,13 @@ function kirimPesanWA($nomor, $nama, $role = "Customer") {
         CURLOPT_CUSTOMREQUEST => 'POST',
         CURLOPT_POSTFIELDS => array(
             'target' => "$nomor|$nama|$role",
-            'message' => "Halo {name}, pesanan laundry Anda telah selesai. Terima kasih!",
+            'message' => "Pesanan laundry anda telah selesai, terimakasih sudah menggunakan jasa kami 🙏
+Nama: $nama
+Layanan: $layanan
+Berat: $berat (lot)
+Metode pembayaran: $metodepembayaran
+
+Total harga: $total",
         ),
         CURLOPT_HTTPHEADER => array(
             'Authorization: TJ1jp5F1bi7rvbs4dub9' // Ganti dengan token asli
