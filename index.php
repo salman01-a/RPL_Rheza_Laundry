@@ -20,25 +20,26 @@ if (isset($_GET['dev']) && $_GET['dev'] === 'create') {
 }
 
 if (isset($_POST['submit'])) {
-    $username = $_POST['username'];
-    $password = $_POST['password'];
+  $username = $_POST['username'];
+  $password = $_POST['password'];
 
-    // Ambil user berdasarkan username
-    $query = "SELECT * FROM Users WHERE username = '$username'";
-    $result = mysqli_query($conn, $query);
-    $user = mysqli_fetch_assoc($result);
+  $stmt = $conn->prepare("SELECT * FROM users WHERE username = ? AND password = ?");
+  $stmt->bind_param("ss", $username, $password);
+  $stmt->execute();
+  $result = $stmt->get_result();
+  $user = $result->fetch_assoc();
 
-    // Verifikasi password yang sudah di-hash
-    if ($user ) {
-        $_SESSION['user_id'] = $user['id_user'];
-        $_SESSION['role'] = $user['role'];
-        header("Location: view/dashboard.php");
-        exit();
-    } else {
-        header("Location: index.php?pesan=gagal");
-        exit();
-    }
+  if ($user) {
+      $_SESSION['user_id'] = $user['id_user'];
+      $_SESSION['role'] = $user['role'];
+      header("Location: view/dashboard.php");
+      exit();
+  } else {
+      header("Location: index.php?pesan=gagal");
+      exit();
+  }
 }
+
 if (isset($_GET['pesan']) && $_GET['pesan'] == 'gagal'){
   $gagal = true;
 }
@@ -67,7 +68,7 @@ if (isset($_GET['pesan']) && $_GET['pesan'] == 'gagal'){
         </div>
         <div class="input-group">
           <input type="password" placeholder="PASSWORD" name= "password"required />
-          <p style="text-align: left; margin = 2px;"><?php echo($gagal)? "<span style='color:#fa1111;'>Username atau Password Salah</span>":""; ?></p>
+          <p style="text-align: left; margin = 2px; "><?php echo($gagal)? "<span style='color:#fa1111;'>Username atau Password Salah</span>":""; ?></p>
         </div>
         <button type="submit" name="submit">LOGIN</button>
       </form>
